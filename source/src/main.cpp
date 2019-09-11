@@ -2,5 +2,10 @@
 
 int main()
 {
-  return testCompilation();
+  HitClusterInfo a;
+  HitClusterInfo b(4);
+  HitClusterInfo c(2,500);
+  // This will crash
+  HitClusterInfo d(1);
+  return 0;
 }
