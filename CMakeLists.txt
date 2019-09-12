@@ -17,6 +17,8 @@ set (CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR})
 
 add_definitions("-std=c++11")
 
+enable_testing()
+
 ADD_SUBDIRECTORY( ./source )
 
 include_directories( ${${PROJECT_NAME}_include_dir} )
