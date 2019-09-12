@@ -12,4 +12,6 @@ Code licensed under the CeCILL 2.1 license :
 - mkdir build
 - cd build 
 - cmake ..
+- optional : make test 
 - make install
+
