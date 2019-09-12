@@ -52,9 +52,35 @@ class HitClusterInfo
 {
  public:
   HitClusterInfo(unsigned int nClusters=2,unsigned int nhits=0);
+  
+  void addHit(const void * hit); 
+  bool addHitCheck(const void * hit);
+  
+  unsigned int containerSize() const;
  private:
   unsigned int m_numberOfClusteringCases;
+  unsigned int m_skip;
   std::vector<const void *> m_pointersToHits_and_Clusters;
+
+  std::vector<const void *>::const_iterator find(const void * hit) const;
+  std::vector<const void *>::iterator find(const void * hit);
 };
 
+inline unsigned int HitClusterInfo::containerSize() const
+{
+  return m_pointersToHits_and_Clusters.size();
+}
+
+inline void HitClusterInfo::addHit(const void * hit)
+{
+  m_pointersToHits_and_Clusters.push_back(hit);
+  m_pointersToHits_and_Clusters.resize(m_pointersToHits_and_Clusters.size()+m_numberOfClusteringCases,nullptr);
+}
+
+inline bool HitClusterInfo::addHitCheck(const void * hit)
+{
+  bool added=find(hit) !=m_pointersToHits_and_Clusters.end();
+  if (added) addHit(hit);
+  return added;
+}
 #endif
