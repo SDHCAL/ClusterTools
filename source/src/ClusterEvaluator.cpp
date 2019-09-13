@@ -1,6 +1,7 @@
 #include "ClusterEvaluator.h"
 
 #include <stdexcept>
+#include <set>
 
 HitClusterInfo::HitClusterInfo(unsigned int nClusters,unsigned int nhits) :
   m_numberOfClusteringCases(nClusters),m_skip(nClusters+1),
@@ -29,3 +30,12 @@ std::vector<const void *>::iterator HitClusterInfo::find(const void * hit)
   return m_pointersToHits_and_Clusters.end();
 }
 
+bool HitClusterInfo::checkHitUnicity() const
+{
+  std::set<const void *> hitSet;
+  for (std::vector<const void *>::const_iterator it=m_pointersToHits_and_Clusters.begin();
+       it < m_pointersToHits_and_Clusters.end();
+       it+=m_skip)
+    hitSet.insert(*it);
+  return hitSet.size()==containerSize()/m_skip;
+}

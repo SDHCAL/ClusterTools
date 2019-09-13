@@ -55,6 +55,8 @@ class HitClusterInfo
   
   void addHit(const void * hit); 
   bool addHitCheck(const void * hit);
+
+  bool checkHitUnicity() const;
   
   unsigned int containerSize() const;
  private:
