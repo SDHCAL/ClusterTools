@@ -79,7 +79,7 @@ inline void HitClusterInfo::addHit(const void * hit)
 
 inline bool HitClusterInfo::addHitCheck(const void * hit)
 {
-  bool added=find(hit) !=m_pointersToHits_and_Clusters.end();
+  bool added=(find(hit)==m_pointersToHits_and_Clusters.end());
   if (added) addHit(hit);
   return added;
 }
