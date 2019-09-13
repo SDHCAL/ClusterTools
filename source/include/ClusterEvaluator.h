@@ -55,7 +55,9 @@ class HitClusterInfo
   
   void addHit(const void * hit); 
   bool addHitCheck(const void * hit);
-
+  template<class Titer>
+    void setHits(Titer begin, Titer end);
+  
   bool checkHitUnicity() const;
   
   unsigned int containerSize() const;
@@ -85,4 +87,13 @@ inline bool HitClusterInfo::addHitCheck(const void * hit)
   if (added) addHit(hit);
   return added;
 }
+
+template<class Titer>
+void HitClusterInfo::setHits(Titer begin, Titer end)
+{
+  const void ** itvec= m_pointersToHits_and_Clusters.data();
+  for (Titer it=begin; it!=end; ++it) { (*itvec)=&(*it); itvec+= m_skip;}
+}
+
+
 #endif

@@ -45,6 +45,10 @@ int main()
 
   c.addHitCheck(myCharPointer);
   assert(c.containerSize()==1503);
-
+  assert(! c.checkHitUnicity());
+  c.setHits(myCharPointer,myCharPointer+501);
+  assert(c.checkHitUnicity());
+  
+  
   return 0;
 }
