@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <set>
 
+//#include <iostream>
+
 HitClusterInfo::HitClusterInfo(unsigned int nClusters,unsigned int nhits) :
   m_numberOfClusteringCases(nClusters),m_skip(nClusters+1),
   m_pointersToHits_and_Clusters((1+nClusters)*nhits,nullptr)
@@ -52,4 +54,31 @@ bool HitClusterInfo::addCluster(unsigned int partitionNumber,const void *hit, co
     }
   *(it+(1+partitionNumber))=clusterPointer;
   return hitfound;
+}
+
+
+ClusterPairsDataSums HitClusterInfo::getDataSums(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex)
+{
+  //std::cout << "printout of " << m_pointersToHits_and_Clusters.size() << " hits and clusters : ";
+  //for (auto p : m_pointersToHits_and_Clusters) std::cout << p << " ";
+  //std::cout<<std::endl;
+  //
+  ClusterPairsDataSums result;
+  unsigned int firstCluster=1+firstClusterSetIndex;
+  unsigned int secondCluster=1+secondClusterSetIndex;
+  const void **pbegin=m_pointersToHits_and_Clusters.data();
+  const void **pend=pbegin+m_pointersToHits_and_Clusters.size();
+  for (const void **p1=pbegin; p1<pend; p1+=m_skip)
+    for (const void **p2=p1+m_skip; p2<pend; p2+=m_skip)
+      if (*(p1+firstCluster)==*(p2+firstCluster))
+	{
+	  if (*(p1+secondCluster)==*(p2+secondCluster)) ++result.m_numberOfCoGroupedHitPair_InBothClusterSets;
+	  else ++result.m_numberOfCoGroupedHitPair_OnlyInFirstClusterSet;
+	}
+      else
+	{
+	  if (*(p1+secondCluster)==*(p2+secondCluster)) ++result.m_numberOfCoGroupedHitPair_OnlyInSedondClusterSet;
+	  else ++result.m_numberOfNonCoGroupedHitPair_InBothClusterSets;
+	}
+  return result;
 }

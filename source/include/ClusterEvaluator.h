@@ -42,10 +42,11 @@ class ClusterPairsDataSums
   double FowlkesMallowsIndex() const {return sqrt(Precision()*Recall());}
   
  private:
-  unsigned int m_numberOfCoGroupedHitPair_InBothClusterSets;
-  unsigned int m_numberOfCoGroupedHitPair_OnlyInFirstClusterSet;
-  unsigned int m_numberOfCoGroupedHitPair_OnlyInSedondClusterSet;
-  unsigned int m_numberOfNonCoGroupedHitPair_InBothClusterSets;
+  unsigned int m_numberOfCoGroupedHitPair_InBothClusterSets=0;
+  unsigned int m_numberOfCoGroupedHitPair_OnlyInFirstClusterSet=0;
+  unsigned int m_numberOfCoGroupedHitPair_OnlyInSedondClusterSet=0;
+  unsigned int m_numberOfNonCoGroupedHitPair_InBothClusterSets=0;
+  friend class HitClusterInfo;
 };
 
 
@@ -67,6 +68,9 @@ class HitClusterInfo
   //methods to add clusters
   bool addCluster(unsigned int partitionNumber,const void *hit, const void *clusterPointer, bool addTheHit=false);
   bool addClusterCheck(unsigned int partitionNumber,const void *hit, const void *clusterPointer, bool addTheHit=false);
+
+  //methods to create and fill ClusterPairsDataSums
+  ClusterPairsDataSums getDataSums(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex);
   
   
   unsigned int containerSize() const;
@@ -79,6 +83,7 @@ class HitClusterInfo
   std::vector<const void *>::iterator find(const void * hit);
 
   void checkClusterIndex(unsigned int clusterIndex) const;
+
 };
 
 inline unsigned int HitClusterInfo::containerSize() const
