@@ -52,6 +52,8 @@ int main()
   assert(! addClusterOK);
   assert(a.containerSize()==9);
   checkValue(a.getDataSums(0,1),1,0,2,0); //3 hits, cluster set 1 = ({1,3},{2}), cluster set 2 = ({1,2,3})
+  std::map<HitClusterInfo::ClusterSetIndices,ClusterPairsDataSums> m=a.getAllDataSums();
+  assert(m.size()==1);
 
   HitClusterInfo b(4);
   assert(b.containerSize()==0);
@@ -81,7 +83,8 @@ int main()
   catch (std::range_error&) {exceptionThrown=true;}
   assert(exceptionThrown);
   assert(b.containerSize()==5);
-  
+  m=b.getAllDataSums();
+  assert(m.size()==4*3/2);
 
   HitClusterInfo c(2,500);
   assert(c.containerSize()==1500);

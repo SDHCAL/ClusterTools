@@ -82,3 +82,12 @@ ClusterPairsDataSums HitClusterInfo::getDataSums(unsigned int firstClusterSetInd
 	}
   return result;
 }
+
+std::map<HitClusterInfo::ClusterSetIndices,ClusterPairsDataSums> HitClusterInfo::getAllDataSums()
+{
+  std::map<ClusterSetIndices,ClusterPairsDataSums> m;
+  for (unsigned int i=0; i<m_numberOfClusteringCases; ++i)
+    for (unsigned int j=i+1; j<m_numberOfClusteringCases; ++j)
+      m[std::make_pair(i,j)]=getDataSums(i,j);
+  return m;
+}

@@ -2,6 +2,8 @@
 #define ClusterEvaluator_HH
 
 #include <vector>
+#include <map>
+#include <utility>
 #include <math.h>
 #include <stdexcept>
 
@@ -72,6 +74,8 @@ class HitClusterInfo
   //methods to create and fill ClusterPairsDataSums
   ClusterPairsDataSums getDataSums(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex);
   
+  typedef std::pair<unsigned int,unsigned int> ClusterSetIndices;
+  std::map<ClusterSetIndices,ClusterPairsDataSums> getAllDataSums();
   
   unsigned int containerSize() const;
  private:
