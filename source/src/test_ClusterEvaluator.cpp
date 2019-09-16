@@ -5,18 +5,10 @@
 
 int main()
 {
-  HitClusterInfo a;
-  assert(a.containerSize()==0);
-  assert(a.checkHitUnicity());
-  HitClusterInfo b(4);
-  assert(b.containerSize()==0);
-  HitClusterInfo c(2,500);
-  assert(c.containerSize()==1500);
-  assert(! c.checkHitUnicity());
   bool exceptionThrown = false;
   try
     {
-      HitClusterInfo d(1);
+      HitClusterInfo dummy(1);
     }
   catch(std::domain_error&)
     {
@@ -24,17 +16,25 @@ int main()
     }
   assert(exceptionThrown);
 
+
   char myChar[1000];
   char* myCharPointer=myChar;
   std::vector<int> intvec(100,34);
-  
+
+  HitClusterInfo a;
+  assert(a.containerSize()==0);
+  assert(a.checkHitUnicity());
   a.addHit(myCharPointer);
   assert(a.containerSize()==3);
   assert(a.checkHitUnicity());
   a.addHit(myCharPointer);
   assert(a.containerSize()==6);
   assert(! a.checkHitUnicity());
-  
+
+
+
+  HitClusterInfo b(4);
+  assert(b.containerSize()==0);
   bool addOK=false;
   addOK=b.addHitCheck(myCharPointer);
   assert(b.containerSize()==5);
@@ -45,12 +45,14 @@ int main()
   assert(addOK==false);
   assert(b.checkHitUnicity());
 
+  HitClusterInfo c(2,500);
+  assert(c.containerSize()==1500);
+  assert(! c.checkHitUnicity());
   c.addHitCheck(myCharPointer);
   assert(c.containerSize()==1503);
   assert(! c.checkHitUnicity());
   c.setHits(myCharPointer,myCharPointer+501);
-  assert(c.checkHitUnicity());
-  
+  assert(c.checkHitUnicity());  
   c.setHits(intvec.begin(),intvec.end());
   assert(c.checkHitUnicity());
   c.setHits(intvec);
