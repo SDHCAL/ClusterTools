@@ -6,6 +6,7 @@
 #include <utility>
 #include <math.h>
 #include <stdexcept>
+#include <iostream>
 
 class ClusterPairsDataSums
 {
@@ -42,7 +43,10 @@ class ClusterPairsDataSums
   double Recall() const {return TP()/1.0d/(TP()+FN());}
   double Fmeasure(double beta) const {return ((beta*beta+1)*Precision()*Recall())/(beta*beta*Precision()+Recall());}
   double FowlkesMallowsIndex() const {return sqrt(Precision()*Recall());}
-  
+
+
+  //setter
+  void set(unsigned int both, unsigned int onlyFirst, unsigned int onlySecond, unsigned int none);
  private:
   unsigned int m_numberOfCoGroupedHitPair_InBothClusterSets=0;
   unsigned int m_numberOfCoGroupedHitPair_OnlyInFirstClusterSet=0;
@@ -50,6 +54,9 @@ class ClusterPairsDataSums
   unsigned int m_numberOfNonCoGroupedHitPair_InBothClusterSets=0;
   friend class HitClusterInfo;
 };
+
+std::ostream& operator<<(std::ostream& flux, const ClusterPairsDataSums);
+std::istream& operator>>(std::istream& flux, ClusterPairsDataSums&);
 
 
 class HitClusterInfo
