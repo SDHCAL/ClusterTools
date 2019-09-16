@@ -85,6 +85,10 @@ int main()
   assert(b.containerSize()==5);
   m=b.getAllDataSums();
   assert(m.size()==4*3/2);
+  exceptionThrown = false;
+  try { b.getDataSumsCheck(0,7);}
+  catch (std::range_error&) {exceptionThrown=true;}
+  assert(exceptionThrown);
 
   HitClusterInfo c(2,500);
   assert(c.containerSize()==1500);

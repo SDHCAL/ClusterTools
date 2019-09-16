@@ -73,6 +73,7 @@ class HitClusterInfo
 
   //methods to create and fill ClusterPairsDataSums
   ClusterPairsDataSums getDataSums(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex);
+  ClusterPairsDataSums getDataSumsCheck(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex);
   
   typedef std::pair<unsigned int,unsigned int> ClusterSetIndices;
   std::map<ClusterSetIndices,ClusterPairsDataSums> getAllDataSums();
@@ -125,5 +126,12 @@ inline bool HitClusterInfo::addClusterCheck(unsigned int partitionNumber,const v
 {
   checkClusterIndex(partitionNumber);
   addCluster(partitionNumber,hit,clusterPointer,addTheHit);
+}
+
+inline ClusterPairsDataSums HitClusterInfo::getDataSumsCheck(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex)
+{
+  checkClusterIndex(firstClusterSetIndex);
+  checkClusterIndex(secondClusterSetIndex);
+  return getDataSums(firstClusterSetIndex,secondClusterSetIndex);
 }
 #endif
