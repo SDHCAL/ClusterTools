@@ -53,7 +53,8 @@ class HitClusterInfo
 {
  public:
   HitClusterInfo(unsigned int nClusters=2,unsigned int nhits=0);
-  
+
+  // methods to add hits
   void addHit(const void * hit); 
   bool addHitCheck(const void * hit);
   template <class Titer>
@@ -62,6 +63,11 @@ class HitClusterInfo
     void setHits(const Container& c) {setHits(c.begin(),c.end());}
   
   bool checkHitUnicity() const;
+
+  //methods to add clusters
+  bool addCluster(unsigned int partitionNumber,const void *hit, const void *clusterPointer, bool addTheHit=false);
+  bool addClusterCheck(unsigned int partitionNumber,const void *hit, const void *clusterPointer, bool addTheHit=false);
+  
   
   unsigned int containerSize() const;
  private:
@@ -71,6 +77,8 @@ class HitClusterInfo
 
   std::vector<const void *>::const_iterator find(const void * hit) const;
   std::vector<const void *>::iterator find(const void * hit);
+
+  void checkClusterIndex(unsigned int clusterIndex) const;
 };
 
 inline unsigned int HitClusterInfo::containerSize() const
@@ -98,5 +106,15 @@ void HitClusterInfo::setHits(Titer begin, Titer end)
   for (Titer it=begin; it!=end; ++it) { (*itvec)=&(*it); itvec+= m_skip;}
 }
 
+inline void HitClusterInfo::checkClusterIndex(unsigned int clusterIndex) const
+{
+  if (clusterIndex>=m_numberOfClusteringCases)
+    throw std::range_error("HitClusterInfo called with too high cluster index number");
+}
 
+inline bool HitClusterInfo::addClusterCheck(unsigned int partitionNumber,const void *hit, const void *clusterPointer, bool addTheHit)
+{
+  checkClusterIndex(partitionNumber);
+  addCluster(partitionNumber,hit,clusterPointer,addTheHit);
+}
 #endif

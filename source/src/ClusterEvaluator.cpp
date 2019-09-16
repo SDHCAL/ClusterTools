@@ -39,3 +39,17 @@ bool HitClusterInfo::checkHitUnicity() const
     hitSet.insert(*it);
   return hitSet.size()==containerSize()/m_skip;
 }
+
+
+bool HitClusterInfo::addCluster(unsigned int partitionNumber,const void *hit, const void *clusterPointer,  bool addTheHit)
+{
+  std::vector<const void *>::iterator it=find(hit);
+  bool hitfound=(it!=m_pointersToHits_and_Clusters.end());
+  if (! hitfound)
+    {
+      if (addTheHit) {addHit(hit); it=find(hit);}
+      else throw std::domain_error("HitClusterInfo::addCluster, hit not found");
+    }
+  *(it+(1+partitionNumber))=clusterPointer;
+  return hitfound;
+}
