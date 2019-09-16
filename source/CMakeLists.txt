@@ -2,6 +2,7 @@
 
 set (${PROJECT_NAME}_libsources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ClusterEvaluator.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ClusterPairsDataSums.cpp
   PARENT_SCOPE
   )
 
