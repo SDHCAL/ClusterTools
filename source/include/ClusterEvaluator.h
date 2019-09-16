@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <math.h>
+#include <stdexcept>
 
 class ClusterPairsDataSums
 {
@@ -55,8 +56,10 @@ class HitClusterInfo
   
   void addHit(const void * hit); 
   bool addHitCheck(const void * hit);
-  template<class Titer>
+  template <class Titer>
     void setHits(Titer begin, Titer end);
+  template <class Container>
+    void setHits(const Container& c) {setHits(c.begin(),c.end());}
   
   bool checkHitUnicity() const;
   

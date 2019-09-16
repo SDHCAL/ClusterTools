@@ -26,6 +26,8 @@ int main()
 
   char myChar[1000];
   char* myCharPointer=myChar;
+  std::vector<int> intvec(100,34);
+  
   a.addHit(myCharPointer);
   assert(a.containerSize()==3);
   assert(a.checkHitUnicity());
@@ -49,6 +51,11 @@ int main()
   c.setHits(myCharPointer,myCharPointer+501);
   assert(c.checkHitUnicity());
   
-  
+  c.setHits(intvec.begin(),intvec.end());
+  assert(c.checkHitUnicity());
+  c.setHits(intvec);
+  assert(c.checkHitUnicity());
+
+
   return 0;
 }
