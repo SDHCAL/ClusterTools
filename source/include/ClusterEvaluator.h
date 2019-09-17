@@ -28,11 +28,11 @@ class HitClusterInfo
   bool addClusterCheck(unsigned int partitionNumber,const void *hit, const void *clusterPointer, bool addTheHit=false);
 
   //methods to create and fill ClusterPairsDataSums
-  ClusterPairsDataSums getDataSums(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex);
-  ClusterPairsDataSums getDataSumsCheck(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex);
+  ClusterPairsDataSums getDataSums(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex) const;
+  ClusterPairsDataSums getDataSumsCheck(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex) const;
   
   typedef std::pair<unsigned int,unsigned int> ClusterSetIndices;
-  std::map<ClusterSetIndices,ClusterPairsDataSums> getAllDataSums();
+  std::map<ClusterSetIndices,ClusterPairsDataSums> getAllDataSums() const;
   
   unsigned int containerSize() const;
  private:
@@ -84,7 +84,7 @@ inline bool HitClusterInfo::addClusterCheck(unsigned int partitionNumber,const v
   addCluster(partitionNumber,hit,clusterPointer,addTheHit);
 }
 
-inline ClusterPairsDataSums HitClusterInfo::getDataSumsCheck(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex)
+inline ClusterPairsDataSums HitClusterInfo::getDataSumsCheck(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex) const
 {
   checkClusterIndex(firstClusterSetIndex);
   checkClusterIndex(secondClusterSetIndex);
