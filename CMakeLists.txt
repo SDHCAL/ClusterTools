@@ -18,8 +18,23 @@ set (CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR})
 add_definitions("-std=c++11")
 
 option(BUILD_WITH_ROOT "Link to ROOT and generate some ROOT dictionnary" OFF)
+option(BUILD_WITH_LCIO "build LCIO dependant code (use if input files are in LCIO format)" OFF)
 
 enable_testing()
+
+if (BUILD_WITH_LCIO)
+  if (NOT DEFINED ENV{LCIO})
+    message(WARNING "Either the LCIO environment variable to point to your local LCIO installation or have the CMAKE_MODULE_PATH library to point to it")
+  else()
+    if (NOT DEFINED CMAKE_PREFIX_PATH)
+      set(CMAKE_PREFIX_PATH "$ENV{LCIO}")
+    else()
+      set(CMAKE_PREFIX_PATH "$ENV{LCIO};${CMAKE_PREFIX_PATH}")
+    endif()
+  endif()
+  find_package(LCIO CONFIG REQUIRED)
+  include_directories(${LCIO_INCLUDE_DIRS})
+endif()
 
 if (BUILD_WITH_ROOT)
   message ("BUILD_WITH_ROOT activated")
