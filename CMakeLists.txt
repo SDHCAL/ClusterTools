@@ -49,6 +49,7 @@ add_executable( ${PROJECT_NAME}_exe ${${PROJECT_NAME}_exesource} )
 target_link_libraries( ${PROJECT_NAME}_exe  ${PROJECT_NAME} )
 if (BUILD_WITH_ROOT)
   target_link_libraries( ${PROJECT_NAME}_exe ${ROOT_LIBRARIES} )
+  install (FILES ${CMAKE_BINARY_DIR}/libClusterPairsDataSums_rdict.pcm DESTINATION lib)
 endif()
 
 install (TARGETS ${PROJECT_NAME} DESTINATION lib)
