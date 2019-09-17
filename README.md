@@ -17,18 +17,18 @@ Code licensed under the CeCILL 2.1 license :
 
 ### Installation with ROOT
 If you have ROOT installed, you can replace
-cmake ..
+    cmake ..
 by
-cmake -D BUILD_WITH_ROOT=ON ..
+    cmake -D BUILD_WITH_ROOT=ON ..
 
 In that case, if your LD_LIBRARY_PATH points to the lib directory,
 you can convert the ASCII output of the ClusterTools_exe executable to a ROOT TTree.
 At the ROOT prompter do
-   .L ../lib/libClusterTools.so
-   TTree dummy // to get the TTree shared library loaded
-   TTree *t=ClusterPairsDataSums_ASCIItoTTree("random_test.txt")
+    .L ../lib/libClusterTools.so
+    TTree dummy // to get the TTree shared library loaded
+    TTree *t=ClusterPairsDataSums_ASCIItoTTree("random_test.txt")
 and then, you can do
-   t->Draw("data.a()")
-   t->Draw("data.RandIndex()")
+    t->Draw("data.a()")
+    t->Draw("data.RandIndex()")
 
 
