@@ -32,11 +32,11 @@ class ClusterPairsDataSums
   unsigned int FN() const {return NumberOfFalseNegative();}
 
   //the measures
-  double RandIndex() const {return (TP()+TN())/1.0d/(TP()+FP()+FN()+TN());}
-  double JacardIndex() const {return TP()/1.0d/(TP()+FP()+FN());}
-  double DiceIndex() const {return 2*TP()/1.0d/(2*TP()+FP()+FN());}
-  double Precision() const {return TP()/1.0d/(TP()+FP());}
-  double Recall() const {return TP()/1.0d/(TP()+FN());}
+  double RandIndex() const {return (TP()+TN())/1.0/(TP()+FP()+FN()+TN());}
+  double JacardIndex() const {return TP()/1.0/(TP()+FP()+FN());}
+  double DiceIndex() const {return 2*TP()/1.0/(2*TP()+FP()+FN());}
+  double Precision() const {return TP()/1.0/(TP()+FP());}
+  double Recall() const {return TP()/1.0/(TP()+FN());}
   double Fmeasure(double beta) const {return ((beta*beta+1)*Precision()*Recall())/(beta*beta*Precision()+Recall());}
   double FowlkesMallowsIndex() const {return sqrt(Precision()*Recall());}
 
