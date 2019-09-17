@@ -54,5 +54,9 @@ class ClusterPairsDataSums
 std::ostream& operator<<(std::ostream& flux, const ClusterPairsDataSums);
 std::istream& operator>>(std::istream& flux, ClusterPairsDataSums&);
 
+#ifdef BUILD_WITH_ROOT
+class TTree;
+TTree* ClusterPairsDataSums_ASCIItoTTree(const char *inputfilename, const char* treeName="DataSums");
+#endif
 
 #endif

@@ -39,8 +39,9 @@ ADD_SUBDIRECTORY( ./source )
 include_directories( ${${PROJECT_NAME}_include_dir} )
 
 if (BUILD_WITH_ROOT)
+  add_compile_definitions(BUILD_WITH_ROOT)
   ROOT_GENERATE_DICTIONARY(G__ClusterPairsDataSums ClusterPairsDataSums.h LINKDEF ${${PROJECT_NAME}_include_dir}/ClusterPairsDataSumsLinkDef.h)
-  set(ROOT_DICT_SOURCE G__ClusterPairsDataSums.cxx)
+  set(ROOT_DICT_SOURCE G__ClusterPairsDataSums.cxx ${CMAKE_CURRENT_SOURCE_DIR}/source/src/ROOT_util.cpp)
 endif()
 
 add_library( ${PROJECT_NAME} SHARED ${${PROJECT_NAME}_libsources} ${ROOT_DICT_SOURCE})

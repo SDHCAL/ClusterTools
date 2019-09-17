@@ -5,5 +5,6 @@
 #pragma link off all functions;
 
 #pragma link C++ class ClusterPairsDataSums+;
+#pragma link C++ function ClusterPairsDataSums_ASCIItoTTree;
 
 #endif
