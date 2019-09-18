@@ -18,5 +18,5 @@ set ( ${PROJECT_NAME}_exesource
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(test_ClusterEvaluator src/test_ClusterEvaluator.cpp src/HitClusterInfo.cpp)
-add_test(test_ClusterEvaluator_runs test_ClusterEvaluator)
+add_executable(test_HitClusterInfo src/test_HitClusterInfo.cpp src/HitClusterInfo.cpp)
+add_test(test_HitClusterInfo_runs test_HitClusterInfo)
