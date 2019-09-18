@@ -23,6 +23,7 @@ option(BUILD_WITH_LCIO "build LCIO dependant code (use if input files are in LCI
 enable_testing()
 
 if (BUILD_WITH_LCIO)
+  message ("BUILD_WITH_LCIO activated")
   if (NOT DEFINED ENV{LCIO})
     message(WARNING "Either the LCIO environment variable to point to your local LCIO installation or have the CMAKE_MODULE_PATH library to point to it")
   else()
