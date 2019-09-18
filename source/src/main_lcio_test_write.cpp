@@ -4,8 +4,8 @@
 
 int main(int argc, char **argv)
 {
-  std::vector<std::string> CaloHitCollectionNames;
-  std::vector<std::string> ClusterCollectionNames;
+  std::vector<std::string> CaloHitCollectionNames{"The_Unique_Hit_Collection"};
+  std::vector<std::string> ClusterCollectionNames{"The_Unique_Cluster_Collection"};
   
   LCWriter* lcWrt = LCFactory::getInstance()->createLCWriter();
   lcWrt->open("ClusterTools_test.slcio", LCIO::WRITE_NEW );
