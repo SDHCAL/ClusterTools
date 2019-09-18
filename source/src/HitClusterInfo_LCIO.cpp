@@ -11,7 +11,7 @@
 LCEventImpl* createEvent(unsigned int With_nCaloHits, const std::vector<std::string>& hitCollectionNames, const std::vector<std::string>& clusterCollectionNames)
 {
   if (hitCollectionNames.empty()) throw std::logic_error( "createEvent function should be called with at least one name for hit collection" );
-  if (clusterCollectionNames.empty()) throw std::logic_error( "createEvent function should be called with at least one name for hit collection" );
+  if (clusterCollectionNames.empty()) throw std::logic_error( "createEvent function should be called with at least one name for cluster collection" );
   
   static unsigned int eventNumber=0;
   LCEventImpl*  evt = new LCEventImpl();
