@@ -6,6 +6,13 @@ set (${PROJECT_NAME}_libsources
   PARENT_SCOPE
   )
 
+if (BUILD_WITH_LCIO)
+  set (${PROJECT_NAME}_lcio_libsources
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/HitClusterInfo_LCIO.cpp
+    PARENT_SCOPE
+    )
+endif()
+
 set (${PROJECT_NAME}_include_dir
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   PARENT_SCOPE

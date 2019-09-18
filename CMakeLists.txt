@@ -60,13 +60,18 @@ if (BUILD_WITH_ROOT)
   set(ROOT_DICT_SOURCE G__ClusterPairsDataSums.cxx ${CMAKE_CURRENT_SOURCE_DIR}/source/src/ROOT_util.cpp)
 endif()
 
-add_library( ${PROJECT_NAME} SHARED ${${PROJECT_NAME}_libsources} ${ROOT_DICT_SOURCE})
+add_library( ${PROJECT_NAME} SHARED ${${PROJECT_NAME}_libsources} ${${PROJECT_NAME}_lcio_libsources} ${ROOT_DICT_SOURCE})
 
 add_executable( ${PROJECT_NAME}_exe ${${PROJECT_NAME}_exesource} )
-target_link_libraries( ${PROJECT_NAME}_exe  ${PROJECT_NAME} )
+target_link_libraries( ${PROJECT_NAME}_exe  ${PROJECT_NAME} ${ROOT_LIBRARIES} ${LCIO_LIBRARIES})
 if (BUILD_WITH_ROOT)
-  target_link_libraries( ${PROJECT_NAME}_exe ${ROOT_LIBRARIES} )
   install (FILES ${CMAKE_BINARY_DIR}/libClusterPairsDataSums_rdict.pcm DESTINATION lib)
+endif()
+
+if (BUILD_WITH_LCIO)
+  add_executable(${PROJECT_NAME}_LCIOwrite_test ${CMAKE_CURRENT_SOURCE_DIR}/source/src/main_lcio_test_write.cpp)
+  target_link_libraries(${PROJECT_NAME}_LCIOwrite_test ${PROJECT_NAME} ${LCIO_LIBRARIES} ${ROOT_LIBRARIES})
+  install (TARGETS ${PROJECT_NAME}_LCIOwrite_test DESTINATION bin)
 endif()
 
 install (TARGETS ${PROJECT_NAME} DESTINATION lib)
