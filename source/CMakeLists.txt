@@ -1,7 +1,7 @@
 
 
 set (${PROJECT_NAME}_libsources
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ClusterEvaluator.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/HitClusterInfo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ClusterPairsDataSums.cpp
   PARENT_SCOPE
   )
@@ -18,5 +18,5 @@ set ( ${PROJECT_NAME}_exesource
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(test_ClusterEvaluator src/test_ClusterEvaluator.cpp src/ClusterEvaluator.cpp)
+add_executable(test_ClusterEvaluator src/test_ClusterEvaluator.cpp src/HitClusterInfo.cpp)
 add_test(test_ClusterEvaluator_runs test_ClusterEvaluator)

@@ -1,5 +1,5 @@
-#ifndef ClusterEvaluator_HH
-#define ClusterEvaluator_HH
+#ifndef HitClusterInfo_HH
+#define HitClusterInfo_HH
 
 #include <vector>
 #include <map>

@@ -1,4 +1,4 @@
-#include "ClusterEvaluator.h"
+#include "HitClusterInfo.h"
 
 #include <assert.h>
 #include <stdexcept>
