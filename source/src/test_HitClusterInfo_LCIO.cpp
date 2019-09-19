@@ -9,7 +9,7 @@
 int main()
 {
   const std::vector<std::string> EmptyCol;
-  const std::vector<std::string> DummyColName(1,"dummy");
+  const std::vector<std::string> DummyColName(2,"dummy");
   std::vector<std::string> CaloHitCollectionNames;
   std::vector<std::string> ClusterCollectionNames;
   LCEventImpl* evt=nullptr;
@@ -51,6 +51,11 @@ int main()
   try {HCI_lcio_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
   assert(! exceptionThrown);
     
+  HitClusterInfo_LCIO HCI_lcio_testbis(CaloHitCollectionNames,DummyColName);
+  exceptionThrown = false;
+  try {HCI_lcio_testbis.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
+  assert(exceptionThrown);
+
   HitClusterInfo_LCIO HCI_lcio_noHits(EmptyCol,ClusterCollectionNames);
   HitClusterInfo_LCIO HCI_lcio(CaloHitCollectionNames,ClusterCollectionNames);
   

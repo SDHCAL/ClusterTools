@@ -71,6 +71,10 @@ LCEventImpl* createEvent(unsigned int With_nCaloHits, const std::vector<std::str
 
 const HitClusterInfo& HitClusterInfo_LCIO::analyseEvent(const EVENT::LCEvent* evt)
 {
+  std::vector<LCCollection*> TheClusterCollections;
+  for (auto& collectionName : m_clusterCollectionNames)
+    TheClusterCollections.push_back( evt->getCollection(collectionName.c_str()) );
+  
   std::vector<LCCollectionVec*> TheHitCollections;
   unsigned int nHitTotal=0;
   for (auto& collectionName :  m_hitCollectionNames)
