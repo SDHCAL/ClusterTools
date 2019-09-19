@@ -66,3 +66,10 @@ LCEventImpl* createEvent(unsigned int With_nCaloHits, const std::vector<std::str
   
   return evt;
 }
+
+
+
+const HitClusterInfo& HitClusterInfo_LCIO::analyseEvent(const EVENT::LCEvent* evt)
+{
+  return HCI;
+}

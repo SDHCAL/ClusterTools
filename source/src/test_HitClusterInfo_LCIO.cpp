@@ -8,33 +8,22 @@
 
 int main()
 {
+  const std::vector<std::string> EmptyCol;
   std::vector<std::string> CaloHitCollectionNames;
   std::vector<std::string> ClusterCollectionNames;
   LCEventImpl* evt=nullptr;
   
   bool exceptionThrown = false;
-  try
-    {
-      evt=createEvent(3,CaloHitCollectionNames,ClusterCollectionNames);
-    }
-  catch (std::logic_error&)
-    {
-      exceptionThrown = true;
-    }
+  try { evt=createEvent(3,CaloHitCollectionNames,ClusterCollectionNames); }
+  catch (std::logic_error&) {exceptionThrown = true;}
   assert(exceptionThrown);
 
   CaloHitCollectionNames.push_back("AirHit_One");
   CaloHitCollectionNames.push_back("AirHit_Two");
 
   exceptionThrown = false;
-  try
-    {
-      evt=createEvent(3,CaloHitCollectionNames,ClusterCollectionNames);
-    }
-  catch (std::logic_error&)
-    {
-      exceptionThrown = true;
-    }
+  try{ evt=createEvent(3,CaloHitCollectionNames,ClusterCollectionNames);}
+  catch (std::logic_error&){exceptionThrown = true;}
   assert(exceptionThrown);
 
   ClusterCollectionNames.push_back("Cluster_One");
@@ -43,6 +32,16 @@ int main()
 
   assert(evt->getCollectionNames()->size()==CaloHitCollectionNames.size()+ClusterCollectionNames.size());
   LCTOOLS::dumpEventDetailed(evt);
+
+  exceptionThrown = false;
+  try { HitClusterInfo_LCIO dummyHCI(CaloHitCollectionNames,EmptyCol);}
+  catch (std::domain_error&) {exceptionThrown = true;}
+  assert(exceptionThrown);
+
+  HitClusterInfo_LCIO HCI_noHits(EmptyCol,ClusterCollectionNames);
+  HitClusterInfo_LCIO HCI(CaloHitCollectionNames,ClusterCollectionNames);
+  
+  
   delete evt;
   return 0;
 }
