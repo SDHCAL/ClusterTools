@@ -159,5 +159,11 @@ int main()
   c.setHits(pairB,false); //insert 2 (other) hits at position 2 and 3
   assert(c.checkHitUnicity());
 
+  c.reset(4);
+  intvec.assign(4,0);
+  std::vector<int*> intPtrVec;
+  for (int i=0; i<4; ++i) intPtrVec.push_back(intvec.data()+i);
+  c.setHitsFromPointers(intPtrVec.begin(),intPtrVec.end());
+  c.setHitsFromPointers(intPtrVec);
   return 0;
 }

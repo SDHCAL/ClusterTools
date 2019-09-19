@@ -26,7 +26,10 @@ class HitClusterInfo
     void setHits(Titer begin, Titer end, bool rewind=true);
   template <class Container>
     void setHits(const Container& c, bool rewind=true) {setHits(c.begin(),c.end(),rewind);}
-  
+  template <class Titer>
+    void setHitsFromPointers(Titer begin, Titer end, bool rewind=true); //This is needed when using LCCollectionVec
+  template <class Container>
+    void setHitsFromPointers(const Container& c, bool rewind=true) {setHitsFromPointers(c.begin(),c.end(),rewind);}
   bool checkHitUnicity() const;
 
   //methods to add clusters
@@ -86,9 +89,14 @@ template<class Titer>
 void HitClusterInfo::setHits(Titer begin, Titer end, bool rewind)
 {
   if (rewind) rewind_iterator_memory_for_set_hit();
-  const void ** itvec= iterator_memory_for_set_hit;
-  for (Titer it=begin; it!=end; ++it) { (*itvec)=&(*it); itvec+= m_skip;}
-  iterator_memory_for_set_hit=itvec;
+  for (Titer it=begin; it!=end; ++it)  {(*iterator_memory_for_set_hit)=&(*it); iterator_memory_for_set_hit+= m_skip;}
+}
+
+template<class Titer>
+void HitClusterInfo::setHitsFromPointers(Titer begin, Titer end, bool rewind)
+{
+  if (rewind) rewind_iterator_memory_for_set_hit();
+  for (Titer it=begin; it!=end; ++it)  {(*iterator_memory_for_set_hit)=*it; iterator_memory_for_set_hit+= m_skip;}
 }
 
 inline void HitClusterInfo::checkClusterIndex(unsigned int clusterIndex) const
