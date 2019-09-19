@@ -39,7 +39,7 @@ bool HitClusterInfo::checkHitUnicity() const
        it < m_pointersToHits_and_Clusters.end();
        it+=m_skip)
     hitSet.insert(*it);
-  return hitSet.size()==containerSize()/m_skip;
+  return hitSet.size()==numberOfHits();
 }
 
 

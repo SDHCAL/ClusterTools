@@ -34,7 +34,6 @@ class HitClusterInfo
   typedef std::pair<unsigned int,unsigned int> ClusterSetIndices;
   std::map<ClusterSetIndices,ClusterPairsDataSums> getAllDataSums() const;
   
-  unsigned int containerSize() const;
   unsigned int numberOfHits() const;
   std::vector<unsigned int> numberOfClustersPerClustering() const;
  private:
@@ -49,10 +48,6 @@ class HitClusterInfo
 
 };
 
-inline unsigned int HitClusterInfo::containerSize() const
-{
-  return m_pointersToHits_and_Clusters.size();
-}
 
 inline unsigned int HitClusterInfo::numberOfHits() const
 {
