@@ -40,6 +40,7 @@ int main()
   assert(exceptionThrown);
 
   HitClusterInfo_LCIO HCI_lcio_test(DummyColName,ClusterCollectionNames);
+  HCI_lcio_test.allowsAddingHitsFromCluster();
   exceptionThrown = false;
   try {HCI_lcio_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
   assert(! exceptionThrown);
@@ -50,7 +51,8 @@ int main()
   HCI_lcio_test.allowsMissingHitCollection();
   try {HCI_lcio_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
   assert(! exceptionThrown);
-    
+
+
   HitClusterInfo_LCIO HCI_lcio_testbis(CaloHitCollectionNames,DummyColName);
   exceptionThrown = false;
   try {HCI_lcio_testbis.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
@@ -58,8 +60,10 @@ int main()
 
   HitClusterInfo_LCIO HCI_lcio_noHits(EmptyCol,ClusterCollectionNames);
   HitClusterInfo_LCIO HCI_lcio(CaloHitCollectionNames,ClusterCollectionNames);
-  
-  const HitClusterInfo& HCI=HCI_lcio.analyseEvent(evt);
+    
+  const HitClusterInfo& HCI_noHits=HCI_lcio_noHits.analyseEvent(evt);
+
+  const HitClusterInfo& HCI=HCI_lcio.analyseEvent(evt); //crash
   assert(HCI.numberOfHits()==3);
   
   delete evt;

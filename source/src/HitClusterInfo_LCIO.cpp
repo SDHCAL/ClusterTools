@@ -73,7 +73,14 @@ const HitClusterInfo& HitClusterInfo_LCIO::analyseEvent(const EVENT::LCEvent* ev
 {
   std::vector<LCCollection*> TheClusterCollections;
   for (auto& collectionName : m_clusterCollectionNames)
-    TheClusterCollections.push_back( evt->getCollection(collectionName.c_str()) );
+    {
+      LCCollection* clusterCol=evt->getCollection( collectionName.c_str() );
+      int flag=clusterCol->getFlag();
+      if ( UTIL::BitSet32( flag )[LCIO::CLBIT_HITS] )
+	TheClusterCollections.push_back( clusterCol );
+      else
+	throw std::logic_error("HitClusterInfo_LCIO::analyseEvent : cluster collection should have LCIO::CLBIT_HITS set to get hit information");
+    }
   
   std::vector<LCCollectionVec*> TheHitCollections;
   unsigned int nHitTotal=0;
@@ -91,8 +98,20 @@ const HitClusterInfo& HitClusterInfo_LCIO::analyseEvent(const EVENT::LCEvent* ev
 	}
     }
   HCI.reset(nHitTotal);
-  for (auto& collectionPointer : TheHitCollections) HCI.setHits(*collectionPointer,false);
-
+  for (auto& collectionPointer : TheHitCollections) HCI.setHitsFromPointers(*collectionPointer,false);
+  
+  for (unsigned int indexClustering=0; indexClustering<TheClusterCollections.size(); ++ indexClustering)
+    {
+      LCCollection* currentClusterCollection=TheClusterCollections[indexClustering];
+      for (unsigned int indexCluster=0; indexCluster<currentClusterCollection->getNumberOfElements(); ++indexCluster)
+	{
+	  LCObject* currentObj= currentClusterCollection->getElementAt(indexCluster);
+	  Cluster* currentCluster=dynamic_cast<Cluster*>( currentObj );
+	  const CalorimeterHitVec& thisClusterHits=currentCluster->getCalorimeterHits();
+	  for (auto& HitPointer : thisClusterHits)
+	    HCI.addCluster(indexClustering,HitPointer,currentCluster,m_canAddHitFromClusters); 
+	}
+    }
   
   return HCI;
 }
