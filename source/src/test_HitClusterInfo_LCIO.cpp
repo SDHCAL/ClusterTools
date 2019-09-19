@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "UTIL/LCTOOLS.h"
+#include "IMPL/LCCollectionVec.h"
 
 
 int main()
@@ -63,9 +64,39 @@ int main()
     
   const HitClusterInfo& HCI_noHits=HCI_lcio_noHits.analyseEvent(evt);
 
-  const HitClusterInfo& HCI=HCI_lcio.analyseEvent(evt); //crash
+  const HitClusterInfo& HCI=HCI_lcio.analyseEvent(evt); 
   assert(HCI.numberOfHits()==3);
+  ClusterPairsDataSums cp=HCI.getDataSums(0,1); 
+  assert(cp.a()==1);
+  assert(cp.b()==0);
+  assert(cp.c()==2);
+  assert(cp.d()==0);
+
+  //test missing hit to add
+  CaloHitCollectionNames.pop_back();
+  HitClusterInfo_LCIO HCI_miss(CaloHitCollectionNames,ClusterCollectionNames);
+  exceptionThrown = false;
+  try {HCI_miss.analyseEvent(evt);} catch (std::domain_error&) {exceptionThrown = true;}
+  assert(exceptionThrown);
+  exceptionThrown = false;
+  HCI_miss.allowsAddingHitsFromCluster();
+  try {HCI_miss.analyseEvent(evt);} catch (std::domain_error&) {exceptionThrown = true;}
+  assert(! exceptionThrown);
+  exceptionThrown = false;
+  HCI_miss.forbidsAddingHitsFromCluster();
+  try {HCI_miss.analyseEvent(evt);} catch (std::domain_error&) {exceptionThrown = true;}
+  assert(exceptionThrown);
+  CaloHitCollectionNames.push_back("AirHit_Two");
   
+  //create a cluster collection without the LCIO::CLBIT_HITS set.
+  ClusterCollectionNames.push_back("Cluster_Bad");
+  LCCollectionVec* badColl=new LCCollectionVec( LCIO::CLUSTER );
+  evt->addCollection(badColl,"Cluster_Bad");
+  HitClusterInfo_LCIO HCI_badColl(CaloHitCollectionNames,ClusterCollectionNames);
+  exceptionThrown = false;
+  try {HCI_badColl.analyseEvent(evt);} catch(std::logic_error&) {exceptionThrown = true;}
+  assert(exceptionThrown);
+    
   delete evt;
   return 0;
 }
