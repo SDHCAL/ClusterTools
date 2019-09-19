@@ -19,19 +19,28 @@ class HitClusterInfo_LCIO
 {
  public:
   HitClusterInfo_LCIO(const std::vector<std::string>& hitCollectionNames, const std::vector<std::string>& clusterCollectionNames);
+
+  void allowsMissingHitCollection() {m_throwErrorIfHitCollectionIsNotFound=false;}
+  void forbidsMissingHitCollection() {m_throwErrorIfHitCollectionIsNotFound=true;}
+  void allowsAddingHitsFromCluster() {m_canAddHitFromClusters=true;}
+  void forbidsAddingHitsFromCluster() {m_canAddHitFromClusters=false;}
+  
   const HitClusterInfo& analyseEvent(const EVENT::LCEvent* evt);
  private:
   std::vector<std::string> m_hitCollectionNames;
   std::vector<std::string> m_clusterCollectionNames;
-  //unsigned int m_totalNumberOfHits;
-  //unsigned int * m_totalNumerOfClustersPerCollection;
   HitClusterInfo HCI;
+
+  bool m_throwErrorIfHitCollectionIsNotFound=false;
+  bool m_canAddHitFromClusters=false;
 };
 
 
 inline  HitClusterInfo_LCIO::HitClusterInfo_LCIO(const std::vector<std::string>& hitCollectionNames, const std::vector<std::string>& clusterCollectionNames)
   : m_hitCollectionNames(hitCollectionNames), m_clusterCollectionNames(clusterCollectionNames), HCI(clusterCollectionNames.size())
-{}
+{
+  if (hitCollectionNames.empty())  m_canAddHitFromClusters=true;
+}
 
 
 #endif
