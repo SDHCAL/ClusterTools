@@ -20,14 +20,21 @@ class HitClusterInfo
   void addHit(const void * hit); 
   bool addHitCheck(const void * hit);
   //method to set hits by block.
-  // WARNING : the setHits method don't allocate space in the container
+  // WARNING : the setHits and  setHitsFromPointers methods don't allocate space in the container
   // It is the caller responsability to make sure enough hits have been allocated in HitClusterInfo
+  //
+  // The SetHits methods are for cases where the container contains the hit objects, the iterator are pointers to hit objects
+  // When called, the pointers to the objects (stored in the container) are retrieved by &(*iterator)
+  //
+  // The setHitsFromPointers methods are for cases where the container contains pointers to the hit objects, the iterator are double pointers to hit objects
+  // When called, the pointers (stored in the container) to the objects  are retrieved by *iterator
+  // This is notably the case for LCIO's LCCollectionVec which is a std::vector<LCObject*>
   template <class Titer>
     void setHits(Titer begin, Titer end, bool rewind=true);
   template <class Container>
     void setHits(const Container& c, bool rewind=true) {setHits(c.begin(),c.end(),rewind);}
   template <class Titer>
-    void setHitsFromPointers(Titer begin, Titer end, bool rewind=true); //This is needed when using LCCollectionVec
+    void setHitsFromPointers(Titer begin, Titer end, bool rewind=true); 
   template <class Container>
     void setHitsFromPointers(const Container& c, bool rewind=true) {setHitsFromPointers(c.begin(),c.end(),rewind);}
   bool checkHitUnicity() const;
