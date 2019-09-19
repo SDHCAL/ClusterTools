@@ -86,6 +86,8 @@ const HitClusterInfo& HitClusterInfo_LCIO::analyseEvent(const EVENT::LCEvent* ev
 	  if (m_throwErrorIfHitCollectionIsNotFound) throw;
 	}
     }
+  HCI.reset(nHitTotal);
+  for (auto& collectionPointer : TheHitCollections) HCI.setHits(*collectionPointer,false);
 
   
   return HCI;

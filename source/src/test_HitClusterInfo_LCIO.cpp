@@ -39,21 +39,23 @@ int main()
   catch (std::domain_error&) {exceptionThrown = true;}
   assert(exceptionThrown);
 
-  HitClusterInfo_LCIO HCI_test(DummyColName,ClusterCollectionNames);
+  HitClusterInfo_LCIO HCI_lcio_test(DummyColName,ClusterCollectionNames);
   exceptionThrown = false;
-  try {HCI_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
+  try {HCI_lcio_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
   assert(! exceptionThrown);
-  HCI_test.forbidsMissingHitCollection();
-  try {HCI_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
+  HCI_lcio_test.forbidsMissingHitCollection();
+  try {HCI_lcio_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
   assert(exceptionThrown);
   exceptionThrown = false;
-  HCI_test.allowsMissingHitCollection();
-  try {HCI_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
+  HCI_lcio_test.allowsMissingHitCollection();
+  try {HCI_lcio_test.analyseEvent(evt);} catch (DataNotAvailableException&) {exceptionThrown = true;}
   assert(! exceptionThrown);
     
-  HitClusterInfo_LCIO HCI_noHits(EmptyCol,ClusterCollectionNames);
-  HitClusterInfo_LCIO HCI(CaloHitCollectionNames,ClusterCollectionNames);
+  HitClusterInfo_LCIO HCI_lcio_noHits(EmptyCol,ClusterCollectionNames);
+  HitClusterInfo_LCIO HCI_lcio(CaloHitCollectionNames,ClusterCollectionNames);
   
+  const HitClusterInfo& HCI=HCI_lcio.analyseEvent(evt);
+  assert(HCI.numberOfHits()==3);
   
   delete evt;
   return 0;
