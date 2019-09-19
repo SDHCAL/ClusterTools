@@ -35,6 +35,7 @@ class HitClusterInfo
   std::map<ClusterSetIndices,ClusterPairsDataSums> getAllDataSums() const;
   
   unsigned int containerSize() const;
+  unsigned int numberOfHits() const;
  private:
   unsigned int m_numberOfClusteringCases;
   unsigned int m_skip;
@@ -50,6 +51,11 @@ class HitClusterInfo
 inline unsigned int HitClusterInfo::containerSize() const
 {
   return m_pointersToHits_and_Clusters.size();
+}
+
+inline unsigned int HitClusterInfo::numberOfHits() const
+{
+  return m_pointersToHits_and_Clusters.size()/m_skip;
 }
 
 inline void HitClusterInfo::addHit(const void * hit)
