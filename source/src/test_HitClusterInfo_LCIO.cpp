@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <iostream>
 
+#include "UTIL/LCTOOLS.h"
 
 
 int main()
@@ -22,8 +23,8 @@ int main()
     }
   assert(exceptionThrown);
 
-  CaloHitCollectionNames.push_back("Hilbert");
-  CaloHitCollectionNames.push_back("Space");
+  CaloHitCollectionNames.push_back("AirHit_One");
+  CaloHitCollectionNames.push_back("AirHit_Two");
 
   exceptionThrown = false;
   try
@@ -36,12 +37,12 @@ int main()
     }
   assert(exceptionThrown);
 
-  ClusterCollectionNames.push_back("Clark");
-  ClusterCollectionNames.push_back("Kent");
+  ClusterCollectionNames.push_back("Cluster_One");
+  ClusterCollectionNames.push_back("Cluster_Two");
   evt=createEvent(3,CaloHitCollectionNames,ClusterCollectionNames);
 
-  //for the moment, only two collections, waiting to implement clusters
-  std::cout << "number of collections=" << evt->getCollectionNames()->size() << std::endl;
+  assert(evt->getCollectionNames()->size()==CaloHitCollectionNames.size()+ClusterCollectionNames.size());
+  LCTOOLS::dumpEventDetailed(evt);
   delete evt;
   return 0;
 }
