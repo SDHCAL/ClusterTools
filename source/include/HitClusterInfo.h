@@ -36,11 +36,12 @@ class HitClusterInfo
   
   unsigned int containerSize() const;
   unsigned int numberOfHits() const;
+  std::vector<unsigned int> numberOfClustersPerClustering() const;
  private:
   unsigned int m_numberOfClusteringCases;
   unsigned int m_skip;
   std::vector<const void *> m_pointersToHits_and_Clusters;
-
+  
   std::vector<const void *>::const_iterator find(const void * hit) const;
   std::vector<const void *>::iterator find(const void * hit);
 
@@ -57,6 +58,7 @@ inline unsigned int HitClusterInfo::numberOfHits() const
 {
   return m_pointersToHits_and_Clusters.size()/m_skip;
 }
+
 
 inline void HitClusterInfo::addHit(const void * hit)
 {

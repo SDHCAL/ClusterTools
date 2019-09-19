@@ -91,3 +91,20 @@ std::map<HitClusterInfo::ClusterSetIndices,ClusterPairsDataSums> HitClusterInfo:
       m[std::make_pair(i,j)]=getDataSums(i,j);
   return m;
 }
+
+
+std::vector<unsigned int> HitClusterInfo::numberOfClustersPerClustering() const
+{
+  std::set<const void *> computeClusters[m_numberOfClusteringCases];
+  
+  const void* const* pbegin=m_pointersToHits_and_Clusters.data();
+  const void* const* pend=pbegin+m_pointersToHits_and_Clusters.size();
+  for (const void* const* p=pbegin+1; p<pend; p+=m_skip)
+    for (unsigned int icluster=0; icluster<m_numberOfClusteringCases; ++icluster)
+      computeClusters[icluster].insert(*(p+icluster));
+    
+  std::vector<unsigned int> nClusters(m_numberOfClusteringCases,0);
+  for (unsigned int icluster=0; icluster<m_numberOfClusteringCases; ++icluster)
+    nClusters[icluster]=computeClusters[icluster].size();
+  return nClusters;
+}

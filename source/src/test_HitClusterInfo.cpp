@@ -2,8 +2,10 @@
 
 #include <assert.h>
 #include <stdexcept>
+#include <initializer_list>
 
 #include <iostream>
+
 void checkValue(const ClusterPairsDataSums& p, unsigned int both, unsigned int firstOnly, unsigned int secondOnly, unsigned int none)
 {
   std::cout << "a=" << p.a() << " b=" << p.b() << " c=" << p.c() << " d=" << p.d() << std::endl;
@@ -35,27 +37,37 @@ int main()
   HitClusterInfo a;
   assert(a.containerSize()==0);
   assert(a.numberOfHits()==0);
+  assert(a.numberOfClustersPerClustering().size()==2);
+  assert(a.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({0,0})));
   assert(a.checkHitUnicity());
   checkValue(a.getDataSums(0,1),0,0,0,0);
   a.addHit(myCharPointer);
   assert(a.containerSize()==3);
   assert(a.numberOfHits()==1);
+  assert(a.numberOfClustersPerClustering().size()==2);
+  assert(a.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1})));
   assert(a.checkHitUnicity());
   checkValue(a.getDataSums(0,1),0,0,0,0);
   a.addHit(myCharPointer);
   assert(a.containerSize()==6);
   assert(a.numberOfHits()==2);
+  assert(a.numberOfClustersPerClustering().size()==2);
+  assert(a.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1})));
   assert(! a.checkHitUnicity());
   checkValue(a.getDataSums(0,1),1,0,0,0); //2 hits, only one cluster
   bool addClusterOK=a.addCluster(0,myCharPointer,intvec.data(),true);
   assert(addClusterOK);
   assert(a.containerSize()==6);
   assert(a.numberOfHits()==2);
+  assert(a.numberOfClustersPerClustering().size()==2);
+  assert(a.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({2,1})));
   checkValue(a.getDataSums(0,1),0,0,1,0); //2 hits, the second cluster set with one cluster, the first cluster set with 2 clusters
   addClusterOK=a.addCluster(0,myCharPointer+1,intvec.data(),true);
   assert(! addClusterOK);
   assert(a.containerSize()==9);
   assert(a.numberOfHits()==3);
+  assert(a.numberOfClustersPerClustering().size()==2);
+  assert(a.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({2,1})));
   checkValue(a.getDataSums(0,1),1,0,2,0); //3 hits, cluster set 1 = ({1,3},{2}), cluster set 2 = ({1,2,3})
   std::map<HitClusterInfo::ClusterSetIndices,ClusterPairsDataSums> m=a.getAllDataSums();
   assert(m.size()==1);
@@ -63,10 +75,14 @@ int main()
   HitClusterInfo b(4);
   assert(b.containerSize()==0);
   assert(b.numberOfHits()==0);
+  assert(b.numberOfClustersPerClustering().size()==4);
+  assert(b.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({0,0,0,0})));
   bool addOK=false;
   addOK=b.addHitCheck(myCharPointer);
   assert(b.containerSize()==5);
   assert(b.numberOfHits()==1);
+  assert(b.numberOfClustersPerClustering().size()==4);
+  assert(b.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1,1,1})));
   assert(addOK==true);
   assert(b.checkHitUnicity());
   addOK=b.addHitCheck(myCharPointer);
@@ -78,12 +94,14 @@ int main()
   assert(addClusterOK);
   assert(b.containerSize()==5);
   assert(b.numberOfHits()==1);
+  assert(b.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1,1,1})));
   exceptionThrown = false;
   try { b.addCluster(0,myCharPointer+1,intvec.data());}
   catch (std::domain_error&) {exceptionThrown=true;}
   assert(exceptionThrown);
   assert(b.containerSize()==5);
   assert(b.numberOfHits()==1);
+  assert(b.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1,1,1})));
   exceptionThrown = false;
   try { b.addClusterCheck(0,myCharPointer,intvec.data());}
   catch (std::range_error&) {exceptionThrown=true;}
@@ -105,11 +123,15 @@ int main()
   HitClusterInfo c(2,500);
   assert(c.containerSize()==1500);
   assert(c.numberOfHits()==500);
+  assert(c.numberOfClustersPerClustering().size()==2);
+  assert(c.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1})));
   assert(! c.checkHitUnicity());
   checkValue(c.getDataSums(0,1),500*499/2,0,0,0); //2 * 500 hits dans un meme cluster
   c.addHitCheck(myCharPointer);
   assert(c.containerSize()==1503);
   assert(c.numberOfHits()==501);
+  assert(c.numberOfClustersPerClustering().size()==2);
+  assert(c.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1})));
   assert(! c.checkHitUnicity());
   checkValue(c.getDataSums(0,1),501*500/2,0,0,0); //2 * 501 hits dans un meme cluster
   c.setHits(myCharPointer,myCharPointer+501);
@@ -119,6 +141,8 @@ int main()
   c.setHits(intvec);
   assert(c.checkHitUnicity());
   c.addCluster(0,&(*intvec.begin()),intvec.data());
-  checkValue(c.getDataSums(0,1),500*499/2,0,500,0); //2 cluster 1 hit et 500 hits versus 1 cluster de 501 hits 
+  assert(c.numberOfClustersPerClustering().size()==2);
+  assert(c.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({2,1})));
+  checkValue(c.getDataSums(0,1),500*499/2,0,500,0); //2 clusters 1 hit and 500 hits versus 1 cluster of 501 hits 
   return 0;
 }
