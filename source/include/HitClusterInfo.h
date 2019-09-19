@@ -13,6 +13,9 @@ class HitClusterInfo
  public:
   HitClusterInfo(unsigned int nClusters=2,unsigned int nhits=0);
 
+  //reset with allocate storage for nhits
+  void reset(unsigned int nhits);
+  
   // methods to add hits
   void addHit(const void * hit); 
   bool addHitCheck(const void * hit);
@@ -92,5 +95,11 @@ inline ClusterPairsDataSums HitClusterInfo::getDataSumsCheck(unsigned int firstC
   checkClusterIndex(firstClusterSetIndex);
   checkClusterIndex(secondClusterSetIndex);
   return getDataSums(firstClusterSetIndex,secondClusterSetIndex);
+}
+
+
+inline void HitClusterInfo::reset(unsigned int nhits)
+{
+  m_pointersToHits_and_Clusters.assign(nhits*m_skip,nullptr);
 }
 #endif

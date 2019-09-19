@@ -129,6 +129,14 @@ int main()
   c.addCluster(0,&(*intvec.begin()),intvec.data());
   assert(c.numberOfClustersPerClustering().size()==2);
   assert(c.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({2,1})));
-  checkValue(c.getDataSums(0,1),500*499/2,0,500,0); //2 clusters 1 hit and 500 hits versus 1 cluster of 501 hits 
+  checkValue(c.getDataSums(0,1),500*499/2,0,500,0); //2 clusters 1 hit and 500 hits versus 1 cluster of 501 hits
+
+  c.reset(200);
+  assert(c.numberOfHits()==200);
+  assert(c.numberOfClustersPerClustering().size()==2);
+  assert(c.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1})));
+  assert(! c.checkHitUnicity());
+  checkValue(c.getDataSums(0,1),200*199/2,0,0,0); //2 * 200 hits dans un meme cluster
+  
   return 0;
 }
