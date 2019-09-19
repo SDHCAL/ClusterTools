@@ -20,9 +20,9 @@ class HitClusterInfo
   void addHit(const void * hit); 
   bool addHitCheck(const void * hit);
   template <class Titer>
-    void setHits(Titer begin, Titer end);
+    void setHits(Titer begin, Titer end, bool rewind=true);
   template <class Container>
-    void setHits(const Container& c) {setHits(c.begin(),c.end());}
+    void setHits(const Container& c, bool rewind=true) {setHits(c.begin(),c.end(),rewind);}
   
   bool checkHitUnicity() const;
 
@@ -43,7 +43,9 @@ class HitClusterInfo
   unsigned int m_numberOfClusteringCases;
   unsigned int m_skip;
   std::vector<const void *> m_pointersToHits_and_Clusters;
-  
+  const void ** iterator_memory_for_set_hit;
+
+  void rewind_iterator_memory_for_set_hit(); 
   std::vector<const void *>::const_iterator find(const void * hit) const;
   std::vector<const void *>::iterator find(const void * hit);
 
@@ -57,11 +59,17 @@ inline unsigned int HitClusterInfo::numberOfHits() const
   return m_pointersToHits_and_Clusters.size()/m_skip;
 }
 
+inline void HitClusterInfo::rewind_iterator_memory_for_set_hit()
+{
+  iterator_memory_for_set_hit=m_pointersToHits_and_Clusters.data();
+}
+
 
 inline void HitClusterInfo::addHit(const void * hit)
 {
   m_pointersToHits_and_Clusters.push_back(hit);
   m_pointersToHits_and_Clusters.resize(m_pointersToHits_and_Clusters.size()+m_numberOfClusteringCases,nullptr);
+  rewind_iterator_memory_for_set_hit();
 }
 
 inline bool HitClusterInfo::addHitCheck(const void * hit)
@@ -72,10 +80,12 @@ inline bool HitClusterInfo::addHitCheck(const void * hit)
 }
 
 template<class Titer>
-void HitClusterInfo::setHits(Titer begin, Titer end)
+void HitClusterInfo::setHits(Titer begin, Titer end, bool rewind)
 {
-  const void ** itvec= m_pointersToHits_and_Clusters.data();
+  if (rewind) rewind_iterator_memory_for_set_hit();
+  const void ** itvec= iterator_memory_for_set_hit;
   for (Titer it=begin; it!=end; ++it) { (*itvec)=&(*it); itvec+= m_skip;}
+  iterator_memory_for_set_hit=itvec;
 }
 
 inline void HitClusterInfo::checkClusterIndex(unsigned int clusterIndex) const
@@ -101,5 +111,6 @@ inline ClusterPairsDataSums HitClusterInfo::getDataSumsCheck(unsigned int firstC
 inline void HitClusterInfo::reset(unsigned int nhits)
 {
   m_pointersToHits_and_Clusters.assign(nhits*m_skip,nullptr);
+  rewind_iterator_memory_for_set_hit();
 }
 #endif
