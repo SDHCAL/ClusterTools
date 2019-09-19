@@ -19,6 +19,9 @@ class HitClusterInfo
   // methods to add hits
   void addHit(const void * hit); 
   bool addHitCheck(const void * hit);
+  //method to set hits by block.
+  // WARNING : the setHits method don't allocate space in the container
+  // It is the caller responsability to make sure enough hits have been allocated in HitClusterInfo
   template <class Titer>
     void setHits(Titer begin, Titer end, bool rewind=true);
   template <class Container>
