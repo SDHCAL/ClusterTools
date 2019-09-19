@@ -71,5 +71,22 @@ LCEventImpl* createEvent(unsigned int With_nCaloHits, const std::vector<std::str
 
 const HitClusterInfo& HitClusterInfo_LCIO::analyseEvent(const EVENT::LCEvent* evt)
 {
+  std::vector<LCCollectionVec*> TheHitCollections;
+  unsigned int nHitTotal=0;
+  for (auto& collectionName :  m_hitCollectionNames)
+    {
+      try
+	{
+	  LCCollection *col=evt->getCollection( collectionName.c_str() );
+	  TheHitCollections.push_back( dynamic_cast<LCCollectionVec*>(col) );
+	  nHitTotal+=col->getNumberOfElements();
+	}
+      catch (DataNotAvailableException&)
+	{
+	  if (m_throwErrorIfHitCollectionIsNotFound) throw;
+	}
+    }
+
+  
   return HCI;
 }
