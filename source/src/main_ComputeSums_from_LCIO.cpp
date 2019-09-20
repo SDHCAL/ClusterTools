@@ -85,7 +85,8 @@ int main(int argc, char **argv)
       return 1;
     }
 
-
+  HitClusterInfo_LCIO HCI_lcio(CaloHitCollectionNames,ClusterCollectionNames);
+  LCEvent *evt=nullptr;
   std::ofstream outputFile;
   outputFile.open(outputFileName.c_str());
   
@@ -100,7 +101,31 @@ int main(int argc, char **argv)
 	{
 	  lcReader->open(inputfilename);
 	  outputFile << "file " << inputfilename << " : " << std::endl;
-	  //processing to write
+	  while (evt=lcReader->readNextEvent())
+	    {
+	      outputFile << "event " << evt->getEventNumber() << " in run " << evt->getRunNumber() << " : " << std::endl;
+	      //processing to write
+	      const HitClusterInfo& HCI=HCI_lcio.analyseEvent(evt);
+	      outputFile << HCI.numberOfHits() << " hits: nclusters=";
+	      std::vector<unsigned int> clusterInfo=HCI.numberOfClustersPerClustering();
+	      for (unsigned int ic=0; ic<ClusterCollectionNames.size(); ++ic)
+		{
+		  outputFile << "( " <<  ClusterCollectionNames[ic] << " " <<  clusterInfo[ic] << " )";
+		}
+	      outputFile << std::endl;
+	      std::map<HitClusterInfo::ClusterSetIndices,ClusterPairsDataSums> m=HCI.getAllDataSums();
+	      for (unsigned  int ic=0; ic<ClusterCollectionNames.size(); ++ic)
+		for (unsigned int icbis=ic+1; icbis<ClusterCollectionNames.size(); ++icbis)
+		  {
+		    const ClusterPairsDataSums& CP=m[std::make_pair(ic,icbis)];
+		    outputFile << "\t" << ClusterCollectionNames[ic] << " vs " << ClusterCollectionNames[icbis] << " : " << CP;
+		    outputFile << " || Rand Index=" << CP.RandIndex();
+		    outputFile << " || Jacard Index=" << CP.JacardIndex();
+		    outputFile << " || Dice Index=" << CP. DiceIndex();
+		    outputFile << " || Fowlkes Mallows Index=" << CP.FowlkesMallowsIndex();
+		    outputFile <<  std::endl;
+		  }
+	    }
 	  lcReader->close();
 	}
       catch(IOException& e)
@@ -109,19 +134,6 @@ int main(int argc, char **argv)
 	}
     }
 
-  std::cout << "The program is not yet written" << std::endl;
-
-  /*
-  LCWriter* lcWrt = LCFactory::getInstance()->createLCWriter();
-  lcWrt->open(outputFileName.c_str(), LCIO::WRITE_NEW );
-
-  LCEventImpl* evt=createEvent(nombreDeHits,CaloHitCollectionNames,ClusterCollectionNames);
-  lcWrt->writeEvent( evt );
-  delete evt;
-
-  lcWrt->close();
-  delete lcWrt;
-  */
   outputFile.close();
   return 0;
 };
