@@ -6,7 +6,7 @@
 
 void usage(char* progname)
 {
-  std::cout << "Usage :" << progname << " takes fthe following options : " << std::endl;
+  std::cout << "Usage :" << progname << " takes the following options : " << std::endl;
   std::cout << "\t -n X or --number_of_hits=X : specify the number of hits to cluster (default is 1000)"  << std::endl;
   std::cout << "\t -c X or --number_of_clusters : specify the maximum number of clusters to make (default is 12)" << std::endl;
   std::cout << "\t -C X or --number_of_clusterings : specify the number of random clustering to perform (default is 10)" << std::endl;
