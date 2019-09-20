@@ -35,3 +35,17 @@ t->Draw("data.a()")
 t->Draw("data.RandIndex()")
 ```
 
+### Installation with LCIO
+If you have LCIO installed, you can replace
+`cmake ..`
+by
+`cmake -D BUILD_WITH_LCIO=ON ..`
+
+The installation with LCIO allows to use LCIO files with LCIO::EVENT::CalorimeterHit
+and LCIO::EVENT::Cluster as input to compute sums to estimate cluster set differences
+like Rand index.
+
+2 executables are build by the LCIO build option :
+
+ComputeSums_from_LCIO to Compute the sums and ClusterTools_LCIOwrite_test to write a
+LCIO file that can be used as input to test the behaviour of ComputeSums_from_LCIO
