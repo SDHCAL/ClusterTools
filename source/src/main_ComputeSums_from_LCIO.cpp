@@ -91,10 +91,13 @@ int main(int argc, char **argv)
   outputFile.open(outputFileName.c_str());
   
   LCReader* lcReader = LCFactory::getInstance()->createLCReader();
-  std::vector<std::string> collectionsToRead=CaloHitCollectionNames;
-  collectionsToRead.insert(collectionsToRead.end(),ClusterCollectionNames.begin(),ClusterCollectionNames.end());
-  lcReader->setReadCollectionNames(collectionsToRead);
-
+  if (CaloHitCollectionNames.size()>0)
+    {
+      std::vector<std::string> collectionsToRead=CaloHitCollectionNames;
+      collectionsToRead.insert(collectionsToRead.end(),ClusterCollectionNames.begin(),ClusterCollectionNames.end());
+      lcReader->setReadCollectionNames(collectionsToRead);
+    }
+  
   for (auto& inputfilename :  InputFileNames)
     {
       try
