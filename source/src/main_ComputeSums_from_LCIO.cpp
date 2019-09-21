@@ -6,6 +6,11 @@
 
 #include "IO/LCReader.h"
 
+#ifdef BUILD_WITH_ROOT
+#include "TFile.h"
+#include "TTree.h"
+#include "TString.h"
+#endif
 
 void usage(char* progname)
 {
@@ -29,6 +34,9 @@ int main(int argc, char **argv)
   std::vector<std::string> ClusterCollectionNames;
   std::vector<std::string> InputFileNames;
   std::string outputFileName="ComputeSums.txt";
+#ifdef BUILD_WITH_ROOT
+  std::string ROOTFileName="ComputeSums.root";
+#endif
   
   //option decoding
   static struct option long_options[] = {
@@ -89,6 +97,47 @@ int main(int argc, char **argv)
   LCEvent *evt=nullptr;
   std::ofstream outputFile;
   outputFile.open(outputFileName.c_str());
+
+  unsigned int EventData[ClusterCollectionNames.size()+4];
+  unsigned int& FileIndex=EventData[0];
+  unsigned int& RunNum=EventData[1];
+  unsigned int& EvtNum=EventData[2];
+  unsigned int& NumberOfHits=EventData[3];
+  FileIndex=0;
+
+#ifdef BUILD_WITH_ROOT
+  TFile ROOToutput(ROOTFileName.c_str(),"recreate");
+  TString treeTitle("Tree made from file");
+  if (InputFileNames.size()>1) treeTitle+='s';
+  for (auto& inputName : InputFileNames)
+    {
+      treeTitle+=' ';
+      treeTitle+=inputName;
+    }
+  TTree tree("ComputedSums",treeTitle);
+  //define variables
+  TString EventDataLeafList("FileIndex/i:RunNum:EvtNum:NumberOfHits");
+  for (auto& clusterName :  ClusterCollectionNames)
+    {
+      EventDataLeafList+=":NumberOf_";
+      EventDataLeafList+=clusterName;
+      EventDataLeafList+="_clusters";
+    }
+  tree.Branch("EventData",EventData,EventDataLeafList);
+
+  unsigned int nClusters=ClusterCollectionNames.size();
+  ClusterPairsDataSums CPDS[nClusters*(nClusters-1)];
+  for (unsigned  int ic=0; ic<nClusters; ++ic)
+    for (unsigned int icbis=ic+1; icbis<nClusters; ++icbis)
+      {
+	TString sumstr("Sum_");
+	sumstr+=ClusterCollectionNames[ic];
+	sumstr+="_vs_";
+	sumstr+=ClusterCollectionNames[icbis];
+	tree.Branch(sumstr,CPDS+(nClusters*ic+icbis),32000,0);
+      }
+#endif
+  
   
   LCReader* lcReader = LCFactory::getInstance()->createLCReader();
   if (CaloHitCollectionNames.size()>0)
@@ -103,16 +152,23 @@ int main(int argc, char **argv)
       try
 	{
 	  lcReader->open(inputfilename);
-	  outputFile << "file " << inputfilename << " : " << std::endl;
+	  ++FileIndex;
+	  outputFile << "file " << FileIndex << " (" << inputfilename << ") : " << std::endl;
 	  while (evt=lcReader->readNextEvent())
 	    {
-	      outputFile << "event " << evt->getEventNumber() << " in run " << evt->getRunNumber() << " : " << std::endl;
+	      RunNum=evt->getRunNumber();
+	      EvtNum=evt->getEventNumber();
+	      outputFile << "event " << EvtNum << " in run " << RunNum << " : " << std::endl;
 	      //processing to write
 	      const HitClusterInfo& HCI=HCI_lcio.analyseEvent(evt);
-	      outputFile << HCI.numberOfHits() << " hits: nclusters=";
+	      NumberOfHits=HCI.numberOfHits();
+	      outputFile << NumberOfHits  << " hits: nclusters=";
 	      std::vector<unsigned int> clusterInfo=HCI.numberOfClustersPerClustering();
 	      for (unsigned int ic=0; ic<ClusterCollectionNames.size(); ++ic)
 		{
+#ifdef BUILD_WITH_ROOT
+		  EventData[4+ic]=clusterInfo[ic];
+#endif
 		  outputFile << "( " <<  ClusterCollectionNames[ic] << " " <<  clusterInfo[ic] << " )";
 		}
 	      outputFile << std::endl;
@@ -121,6 +177,9 @@ int main(int argc, char **argv)
 		for (unsigned int icbis=ic+1; icbis<ClusterCollectionNames.size(); ++icbis)
 		  {
 		    const ClusterPairsDataSums& CP=m[std::make_pair(ic,icbis)];
+#ifdef BUILD_WITH_ROOT
+		    CPDS[nClusters*ic+icbis]=CP;
+#endif
 		    outputFile << "\t" << ClusterCollectionNames[ic] << " vs " << ClusterCollectionNames[icbis] << " : " << CP;
 		    outputFile << " || Rand Index=" << CP.RandIndex();
 		    outputFile << " || Jacard Index=" << CP.JacardIndex();
@@ -128,6 +187,9 @@ int main(int argc, char **argv)
 		    outputFile << " || Fowlkes Mallows Index=" << CP.FowlkesMallowsIndex();
 		    outputFile <<  std::endl;
 		  }
+#ifdef BUILD_WITH_ROOT
+	      tree.Fill();
+#endif
 	    }
 	  lcReader->close();
 	}
@@ -137,6 +199,10 @@ int main(int argc, char **argv)
 	}
     }
 
+#ifdef BUILD_WITH_ROOT
+  ROOToutput.Write();
+  ROOToutput.Close();
+#endif
   outputFile.close();
   return 0;
 };
