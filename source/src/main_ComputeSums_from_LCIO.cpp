@@ -20,6 +20,7 @@ void usage(char* progname)
    std::cout << "\t \t \t \t  You need to provide at last 2 Cluster collection names to runs clustering comparisons" << std::endl;
    std::cout << "\t -i or --input_file_name : white space separated list of input slcio file names. You should provide at least one. (no default)"  << std::endl;
    std::cout << "\t -f string or --output_file_basename=string : the output file basename (default is ComputeSums). "  << std::endl;
+   std::cout << "\t -r int or --random_generate_number=int : number of random clustering to generate and write in separate file (default is 0)."  << std::endl;
    std::cout << "\t -h or --help : print this help and exit"  << std::endl;
    std::cout << "Examples:" <<std::endl;
    std::cout << "\t" << progname << " -c hcolOne hcolTwo hcolThree -C ClusColOne ClusColTwo -i test.slcio" << std::endl;
@@ -34,20 +35,22 @@ int main(int argc, char **argv)
   std::vector<std::string> ClusterCollectionNames;
   std::vector<std::string> InputFileNames;
   std::string outputFileNameBase="ComputeSums";
+  unsigned int numberOfRandomGenerate=0;
   
   //option decoding
   static struct option long_options[] = {
-    {"calohit_col_name",      required_argument, 0,  'c' },
-    {"cluster_col_name",      required_argument, 0,  'C' },
-    {"input_file_name",       required_argument, 0,  'i' },
-    {"output_file_name",      required_argument, 0,  'f' },
-    {"help",                  no_argument,       0,  'h' },
-    {0,                       0,                 0,  0   }
+    {"calohit_col_name",       required_argument, 0,  'c' },
+    {"cluster_col_name",       required_argument, 0,  'C' },
+    {"input_file_name",        required_argument, 0,  'i' },
+    {"output_file_name",       required_argument, 0,  'f' },
+    {"random_generate_number", required_argument, 0,  'r' },
+    {"help",                   no_argument,       0,  'h' },
+    {0,                        0,                 0,  0   }
   };
 
   int long_index =0;
   int opt= 0;
-  while ((opt = getopt_long(argc, argv,"c:C:i:f:h",long_options, &long_index )) != -1)
+  while ((opt = getopt_long(argc, argv,"c:C:i:f:r:h",long_options, &long_index )) != -1)
     {
       switch(opt)
 	{
@@ -61,6 +64,7 @@ int main(int argc, char **argv)
 	  while (optind<argc && argv[optind][0] != '-') { InputFileNames.push_back(argv[optind]); ++optind;}
 	  break;
 	case 'f' : outputFileNameBase=optarg; break;
+	case 'r' : numberOfRandomGenerate=atoi(optarg); break;
 	case 'h' : usage(argv[0]); return 0;
 	default  : usage(argv[0]); return 1;
 	}
@@ -136,7 +140,16 @@ int main(int argc, char **argv)
 	tree.Branch(sumstr,CPDS+(nClusters*ic+icbis),32000,0);
       }
 #endif
-  
+
+  HitClusterInfo randomGenerate(ClusterCollectionNames.size());
+  randomGenerate.initializeClustering(time(NULL));
+  std::ofstream outputFileRandom;
+  std::string outputFileNameRandom=outputFileNameBase+"_random.txt";
+  if (numberOfRandomGenerate>0)
+    outputFileRandom.open(outputFileNameRandom.c_str());
+#ifdef BUILD_WITH_ROOT
+  HitClusterInfo_ToTtree randomGenerateROOT(randomGenerate,"RandomClustering");
+#endif
   
   LCReader* lcReader = LCFactory::getInstance()->createLCReader();
   if (CaloHitCollectionNames.size()>0)
@@ -171,6 +184,25 @@ int main(int argc, char **argv)
 		  outputFile << "( " <<  ClusterCollectionNames[ic] << " " <<  clusterInfo[ic] << " )";
 		}
 	      outputFile << std::endl;
+	      //randomGenerate
+	      if (numberOfRandomGenerate>0)
+		{
+		  outputFileRandom << " nhits=" << NumberOfHits << " nclusters= ";
+		  for (auto &m : clusterInfo) outputFileRandom << m << " ";
+		  outputFileRandom << std::endl;
+		}  
+	      for (unsigned int iloopRandom=0; iloopRandom<numberOfRandomGenerate; ++iloopRandom)
+		{
+		  randomGenerate.reset(NumberOfHits);
+		  randomGenerate.randomClustering(clusterInfo,true);
+		  for (auto &m : randomGenerate.getAllDataSums())
+		    outputFileRandom << m.second << std::endl;
+		  outputFileRandom << "------------------------------------------------------------------------" << std::endl;
+#ifdef BUILD_WITH_ROOT
+		  randomGenerateROOT.Fill();
+#endif		  
+		}
+	      //end randomGenerate
 	      std::map<HitClusterInfo::ClusterSetIndices,ClusterPairsDataSums> m=HCI.getAllDataSums();
 	      for (unsigned  int ic=0; ic<ClusterCollectionNames.size(); ++ic)
 		for (unsigned int icbis=ic+1; icbis<ClusterCollectionNames.size(); ++icbis)
@@ -203,5 +235,7 @@ int main(int argc, char **argv)
   ROOToutput.Close();
 #endif
   outputFile.close();
+  if (numberOfRandomGenerate>0)
+    outputFileRandom.close();
   return 0;
 };
