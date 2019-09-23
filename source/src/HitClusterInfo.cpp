@@ -118,7 +118,7 @@ void HitClusterInfo::randomClustering(std::vector<unsigned int> numbersOfCluster
     {
       if (nClusters>numberOfHits())
 	throw std::domain_error(std::string("HitClusterInfo::randomClustering error : can't generate ")+std::to_string(nClusters)+std::string(" clusters from ")+std::to_string(numberOfHits())+std::string(" hits only."));
-      if (nClusters<maxClusters) maxClusters=nClusters;
+      if (nClusters>maxClusters) maxClusters=nClusters;
     }
 
   if (numbersOfClusters.size()<m_numberOfClusteringCases)
