@@ -5,6 +5,7 @@
 #include <map>
 #include <utility>
 #include <stdexcept>
+#include <stdlib.h>
 
 #include "ClusterPairsDataSums.h"
 
@@ -43,6 +44,10 @@ class HitClusterInfo
   bool addCluster(unsigned int partitionNumber,const void *hit, const void *clusterPointer, bool addTheHit=false);
   bool addClusterCheck(unsigned int partitionNumber,const void *hit, const void *clusterPointer, bool addTheHit=false);
 
+  //methods to generate random clustering
+  void initializeClustering(long int seedVal) {srand48(seedVal);}
+  void randomClustering(std::vector<unsigned int> numberOfClusters,bool exactClusterCount=false);
+  
   //methods to create and fill ClusterPairsDataSums
   ClusterPairsDataSums getDataSums(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex) const;
   ClusterPairsDataSums getDataSumsCheck(unsigned int firstClusterSetIndex,unsigned int secondClusterSetIndex) const;

@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <set>
+#include <algorithm>
 
 
 
@@ -108,4 +109,61 @@ std::vector<unsigned int> HitClusterInfo::numberOfClustersPerClustering() const
   for (unsigned int icluster=0; icluster<m_numberOfClusteringCases; ++icluster)
     nClusters[icluster]=computeClusters[icluster].size();
   return nClusters;
+}
+
+void HitClusterInfo::randomClustering(std::vector<unsigned int> numbersOfClusters,bool exactClusterCount)
+{
+  unsigned int maxClusters=0;
+  for (auto nClusters : numbersOfClusters)
+    {
+      if (nClusters>numberOfHits())
+	throw std::domain_error(std::string("HitClusterInfo::randomClustering error : can't generate ")+std::to_string(nClusters)+std::string(" clusters from ")+std::to_string(numberOfHits())+std::string(" hits only."));
+      if (nClusters<maxClusters) maxClusters=nClusters;
+    }
+
+  if (numbersOfClusters.size()<m_numberOfClusteringCases)
+    numbersOfClusters.resize(m_numberOfClusteringCases,*numbersOfClusters.rbegin());
+
+  double interval_separator[maxClusters];
+  const void** pbegin=m_pointersToHits_and_Clusters.data();
+  const void** pend=pbegin+m_pointersToHits_and_Clusters.size();
+
+  for (unsigned int indexClustering=0; indexClustering<m_numberOfClusteringCases; ++indexClustering)
+    {
+      //random generation of the mean cluster fraction of hits
+      unsigned int nClusters=numbersOfClusters[indexClustering];
+      for (unsigned indexseparator=0;indexseparator<nClusters-1;++indexseparator)
+	interval_separator[indexseparator]=drand48();
+      std::sort(interval_separator,interval_separator+(nClusters-1));
+      interval_separator[nClusters-1]=1.0;
+      //generate random clusters
+      const void** pCluster=pbegin+(indexClustering+1);
+      if (exactClusterCount) //make sure each genertaed cluster will have at least one hit
+	for (unsigned int indexCluster=0; indexCluster<nClusters; ++indexCluster)
+	  {
+	    (*pCluster)=interval_separator+indexCluster;
+	    pCluster+=m_skip;
+	  }
+      for (; pCluster<pend; pCluster+=m_skip)
+	{
+	  double tir=drand48();
+	  for (unsigned indexseparator=0;indexseparator<nClusters;++indexseparator)
+	    if (tir<interval_separator[indexseparator])
+	      {
+		(*pCluster)=interval_separator+indexseparator;
+		break;
+	      }
+	}
+      //if exactcluster, shuffle the first nclusters hits
+      pCluster=pbegin+(indexClustering+1);
+      const void** pfirstHit=pCluster;
+      if (exactClusterCount)
+	if (nClusters<numberOfHits()) //nothing to swap do if nClusters==numberOfHits()
+	    for (unsigned int indexCluster=0; indexCluster<nClusters; ++indexCluster)
+	      {
+		unsigned long int newplace = nClusters+(lrand48()%(numberOfHits()-nClusters));
+		std::swap(*pCluster,*(pfirstHit+(newplace*m_skip)));
+		pCluster+=m_skip;
+	      }
+    }
 }

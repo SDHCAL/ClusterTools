@@ -165,5 +165,33 @@ int main()
   for (int i=0; i<4; ++i) intPtrVec.push_back(intvec.data()+i);
   c.setHitsFromPointers(intPtrVec.begin(),intPtrVec.end());
   c.setHitsFromPointers(intPtrVec);
+
+  //test randomGeneration
+  std::vector<unsigned int> nclus={3,4};
+  c.reset(2);
+  exceptionThrown = false;
+  try { c.randomClustering(nclus);}
+  catch (std::domain_error&) {exceptionThrown=true;}
+  assert(exceptionThrown);
+  c.reset(4);
+  c.randomClustering(nclus);
+  c.reset(30);
+  for (unsigned int iloop=0; iloop<50;++iloop)
+    {
+      c.randomClustering(nclus);
+      std::vector<unsigned int> testVec=c.numberOfClustersPerClustering();
+      assert(testVec[0]<=3);
+      assert(testVec[1]<=4);
+    }
+  for (unsigned int iloop=0; iloop<50;++iloop)
+    {
+      c.randomClustering(nclus,true);
+      assert(c.numberOfClustersPerClustering()==nclus);
+    }
+
+  b.reset(20);
+  b.randomClustering(nclus,true);
+  assert(b.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({3,4,4,4})));
+
   return 0;
 }
