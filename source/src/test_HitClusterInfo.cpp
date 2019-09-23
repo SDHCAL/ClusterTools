@@ -36,6 +36,7 @@ int main()
 
   HitClusterInfo a;
   assert(a.numberOfHits()==0);
+  assert(a.numberOfClusteringCases()==2);
   assert(a.numberOfClustersPerClustering().size()==2);
   assert(a.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({0,0})));
   assert(a.checkHitUnicity());
@@ -69,6 +70,7 @@ int main()
 
   HitClusterInfo b(4);
   assert(b.numberOfHits()==0);
+  assert(b.numberOfClusteringCases()==4);
   assert(b.numberOfClustersPerClustering().size()==4);
   assert(b.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({0,0,0,0})));
   bool addOK=false;
@@ -110,6 +112,7 @@ int main()
 
   HitClusterInfo c(2,500);
   assert(c.numberOfHits()==500);
+  assert(c.numberOfClusteringCases()==2);
   assert(c.numberOfClustersPerClustering().size()==2);
   assert(c.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({1,1})));
   assert(! c.checkHitUnicity());

@@ -167,3 +167,49 @@ void HitClusterInfo::randomClustering(std::vector<unsigned int> numbersOfCluster
 	      }
     }
 }
+
+
+#ifdef BUILD_WITH_ROOT
+HitClusterInfo_ToTtree::HitClusterInfo_ToTtree(const HitClusterInfo& hitclusterinfo,std::string treeName) :
+  m_hitclusterinfo(hitclusterinfo)
+{
+  m_tree=new TTree(treeName.c_str(),"HitClusterInfo to TTree");
+  unsigned int nClustering=hitclusterinfo.numberOfClusteringCases();
+  m_treeIntData = new unsigned int[1+nClustering];
+  m_treeDataSums = new ClusterPairsDataSums[nClustering*nClustering]; //It's more than twice too much space but is easier to compute index
+  std::string ClusterInfoLeaf("NumberOfHits/i");
+  for (unsigned int i=0; i<nClustering; ++i)
+    ClusterInfoLeaf+=(std::string(":NumberOfClusters_")+std::to_string(i));
+  m_tree->Branch("ClusterInfo",m_treeIntData,ClusterInfoLeaf.c_str());
+  for (unsigned int ic=0; ic<nClustering; ++ic)
+    for (unsigned int icbis=ic+1; icbis<nClustering; ++icbis)
+      {
+	std::string branchName("Sum_Clusters_");
+	branchName+=std::to_string(ic)+std::string("_vs_")+std::to_string(icbis);
+	m_tree->Branch(branchName.c_str(),m_treeDataSums+(nClustering*ic+icbis),32000,0);
+      }
+}
+
+HitClusterInfo_ToTtree::~HitClusterInfo_ToTtree()
+{
+  delete [] m_treeDataSums;
+  delete [] m_treeIntData;
+  delete m_tree;
+}
+
+void HitClusterInfo_ToTtree::Fill()
+{
+  m_treeIntData[0]=m_hitclusterinfo.numberOfHits();
+  std::vector<unsigned int> nclus(m_hitclusterinfo.numberOfClustersPerClustering());
+  std::copy(nclus.begin(),nclus.end(),m_treeIntData+1);
+  std::map<HitClusterInfo::ClusterSetIndices,ClusterPairsDataSums> m=m_hitclusterinfo.getAllDataSums();
+  unsigned int nClustering=m_hitclusterinfo.numberOfClusteringCases();  
+  for (unsigned int ic=0; ic<nClustering; ++ic)
+    for (unsigned int icbis=ic+1; icbis<nClustering; ++icbis)
+      {
+	ClusterPairsDataSums& CPDS=m[std::make_pair(ic,icbis)];
+	m_treeDataSums[nClustering*ic+icbis]=CPDS;
+      }
+  m_tree->Fill();
+}
+#endif

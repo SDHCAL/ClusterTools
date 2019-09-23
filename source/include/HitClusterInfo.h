@@ -56,6 +56,7 @@ class HitClusterInfo
   std::map<ClusterSetIndices,ClusterPairsDataSums> getAllDataSums() const;
   
   unsigned int numberOfHits() const;
+  unsigned int numberOfClusteringCases() const;
   std::vector<unsigned int> numberOfClustersPerClustering() const;
  private:
   unsigned int m_numberOfClusteringCases;
@@ -72,9 +73,33 @@ class HitClusterInfo
 };
 
 
+#ifdef BUILD_WITH_ROOT
+#include "TTree.h"
+
+class HitClusterInfo_ToTtree
+{
+ public:
+  HitClusterInfo_ToTtree(const HitClusterInfo& hitclusterinfo,std::string treeName);
+  ~HitClusterInfo_ToTtree();
+
+  TTree* getTree() {return m_tree;}
+  void Fill();
+ private:
+  TTree *m_tree;
+  const HitClusterInfo& m_hitclusterinfo;
+  unsigned int *m_treeIntData;
+  ClusterPairsDataSums *m_treeDataSums;  
+};
+#endif
+
 inline unsigned int HitClusterInfo::numberOfHits() const
 {
   return m_pointersToHits_and_Clusters.size()/m_skip;
+}
+
+inline unsigned int HitClusterInfo::numberOfClusteringCases() const
+{
+  return m_numberOfClusteringCases;
 }
 
 inline void HitClusterInfo::rewind_iterator_memory_for_set_hit()
