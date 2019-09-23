@@ -194,7 +194,7 @@ HitClusterInfo_ToTtree::~HitClusterInfo_ToTtree()
 {
   delete [] m_treeDataSums;
   delete [] m_treeIntData;
-  delete m_tree;
+  //delete m_tree; //ownership is transfered to TFile (ROOT up to 6)
 }
 
 void HitClusterInfo_ToTtree::Fill()
