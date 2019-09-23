@@ -18,7 +18,7 @@ void usage(char* progname)
    std::cout << "\t -c X or --calohit_col_name : white space separated list of LCIO CalorimeterHit collections names. (default is none)" << std::endl;
    std::cout << "\t -C X or --cluster_col_name  : white space separated list of LCIO Cluster collections names. (default is none)" << std::endl;
    std::cout << "\t \t \t \t  You need to provide at last 2 Cluster collection names to runs clustering comparisons" << std::endl;
-   std::cout << "\t -i or --output_file_name : white space separated list of input slcio file names. You should provide at least one. (no default)"  << std::endl;
+   std::cout << "\t -i or --input_file_name : white space separated list of input slcio file names. You should provide at least one. (no default)"  << std::endl;
    std::cout << "\t -f string or --output_file_name=string : the output file name. (default is ComputeSums.txt)"  << std::endl;
    std::cout << "\t -h or --help : print this help and exit"  << std::endl;
    std::cout << "Examples:" <<std::endl;
