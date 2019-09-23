@@ -126,7 +126,7 @@ int main(int argc, char **argv)
   tree.Branch("EventData",EventData,EventDataLeafList);
 
   unsigned int nClusters=ClusterCollectionNames.size();
-  ClusterPairsDataSums CPDS[nClusters*(nClusters-1)];
+  ClusterPairsDataSums CPDS[nClusters*nClusters]; //too much but easier
   for (unsigned  int ic=0; ic<nClusters; ++ic)
     for (unsigned int icbis=ic+1; icbis<nClusters; ++icbis)
       {
