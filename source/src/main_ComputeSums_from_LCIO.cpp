@@ -19,7 +19,7 @@ void usage(char* progname)
    std::cout << "\t -C X or --cluster_col_name  : white space separated list of LCIO Cluster collections names. (default is none)" << std::endl;
    std::cout << "\t \t \t \t  You need to provide at last 2 Cluster collection names to runs clustering comparisons" << std::endl;
    std::cout << "\t -i or --input_file_name : white space separated list of input slcio file names. You should provide at least one. (no default)"  << std::endl;
-   std::cout << "\t -f string or --output_file_name=string : the output file name. (default is ComputeSums.txt)"  << std::endl;
+   std::cout << "\t -f string or --output_file_basename=string : the output file basename (default is ComputeSums). "  << std::endl;
    std::cout << "\t -h or --help : print this help and exit"  << std::endl;
    std::cout << "Examples:" <<std::endl;
    std::cout << "\t" << progname << " -c hcolOne hcolTwo hcolThree -C ClusColOne ClusColTwo -i test.slcio" << std::endl;
@@ -33,10 +33,7 @@ int main(int argc, char **argv)
   std::vector<std::string> CaloHitCollectionNames;
   std::vector<std::string> ClusterCollectionNames;
   std::vector<std::string> InputFileNames;
-  std::string outputFileName="ComputeSums.txt";
-#ifdef BUILD_WITH_ROOT
-  std::string ROOTFileName="ComputeSums.root";
-#endif
+  std::string outputFileNameBase="ComputeSums";
   
   //option decoding
   static struct option long_options[] = {
@@ -63,7 +60,7 @@ int main(int argc, char **argv)
 	case 'i' :InputFileNames.push_back(optarg);
 	  while (optind<argc && argv[optind][0] != '-') { InputFileNames.push_back(argv[optind]); ++optind;}
 	  break;
-	case 'f' : outputFileName=optarg; break;
+	case 'f' : outputFileNameBase=optarg; break;
 	case 'h' : usage(argv[0]); return 0;
 	default  : usage(argv[0]); return 1;
 	}
@@ -96,6 +93,7 @@ int main(int argc, char **argv)
   HitClusterInfo_LCIO HCI_lcio(CaloHitCollectionNames,ClusterCollectionNames);
   LCEvent *evt=nullptr;
   std::ofstream outputFile;
+  std::string outputFileName=outputFileNameBase+".txt";
   outputFile.open(outputFileName.c_str());
 
   unsigned int EventData[ClusterCollectionNames.size()+4];
@@ -106,6 +104,7 @@ int main(int argc, char **argv)
   FileIndex=0;
 
 #ifdef BUILD_WITH_ROOT
+  std::string ROOTFileName=outputFileNameBase+".root";
   TFile ROOToutput(ROOTFileName.c_str(),"recreate");
   TString treeTitle("Tree made from file");
   if (InputFileNames.size()>1) treeTitle+='s';
