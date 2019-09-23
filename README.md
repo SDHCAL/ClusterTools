@@ -49,3 +49,6 @@ like Rand index.
 
 ComputeSums_from_LCIO to Compute the sums and ClusterTools_LCIOwrite_test to write a
 LCIO file that can be used as input to test the behaviour of ComputeSums_from_LCIO
+
+### installation with LCIO and ROOT
+In this case, the ComputeSums_from_LCI will store the computed sum in ROOT trees.
