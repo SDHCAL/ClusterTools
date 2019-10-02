@@ -70,8 +70,30 @@ class HitClusterInfo
 
   void checkClusterIndex(unsigned int clusterIndex) const;
 
+  friend class HitClusterInfo_pairIterator;
 };
 
+
+class HitClusterInfo_pairIterator
+{
+ public:
+  HitClusterInfo_pairIterator(const HitClusterInfo& hci);
+  void reset();
+  void addConditionOnPair(unsigned int clusterSet,bool InSameCluster);
+  bool next();
+  const std::pair<const void* const*,const void* const*>& value() const; 
+ private:
+  void advance();
+  bool notEnd();
+  bool pairIsValid(); 
+
+  
+  const HitClusterInfo& m_hci;
+  const void* const* pbegin; 
+  const void* const* pend; 
+  std::pair<const void* const*, const void* const*> p;
+  std::map<unsigned int, bool> conditions;
+};
 
 #ifdef BUILD_WITH_ROOT
 #include "TTree.h"
@@ -161,4 +183,45 @@ inline void HitClusterInfo::reset(unsigned int nhits)
   m_pointersToHits_and_Clusters.assign(nhits*m_skip,nullptr);
   rewind_iterator_memory_for_set_hit();
 }
+
+
+inline HitClusterInfo_pairIterator::HitClusterInfo_pairIterator(const HitClusterInfo& hci)
+  : m_hci(hci)
+{ reset(); }
+
+inline void HitClusterInfo_pairIterator::addConditionOnPair(unsigned int clusterSet,bool InSameCluster)
+{ conditions[clusterSet+1]=InSameCluster; }
+
+inline const std::pair<const void* const*,const void* const*>& HitClusterInfo_pairIterator::value() const
+{ return p; }
+
+inline bool HitClusterInfo_pairIterator::pairIsValid()
+{
+  for (auto & mc : conditions)
+    if ( mc.second !=( *(p.first+mc.first) == *(p.second+mc.first) ) )
+      return false;
+  return true;
+}
+
+inline bool HitClusterInfo_pairIterator::notEnd()
+{ return (p.first<pend && p.second<pend); }
+
+inline void HitClusterInfo_pairIterator::advance()
+{
+  p.second+=m_hci.m_skip;
+  if (p.second >= pend)
+    {
+      p.first+=m_hci.m_skip;
+      p.second=p.first+m_hci.m_skip;
+    }
+}
+
+inline bool HitClusterInfo_pairIterator::next()
+{
+  do { advance(); }
+  while ( notEnd() && ! pairIsValid() );
+  //std::cout << "At position " << (p.first-pbegin)/m_hci.m_skip << " " << (p.second-pbegin)/m_hci.m_skip << " " << (pend-pbegin)/m_hci.m_skip << std::endl; 
+  return notEnd();
+}
+
 #endif

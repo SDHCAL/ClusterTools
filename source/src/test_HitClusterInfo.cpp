@@ -134,6 +134,39 @@ int main()
   assert(c.numberOfClustersPerClustering()==std::vector<unsigned int>(std::initializer_list<unsigned int>({2,1})));
   checkValue(c.getDataSums(0,1),500*499/2,0,500,0); //2 clusters 1 hit and 500 hits versus 1 cluster of 501 hits
 
+  ClusterPairsDataSums refsums=c.getDataSums(0,1);
+  HitClusterInfo_pairIterator itpair(c);
+  unsigned int nPairs=0;
+  while (itpair.next()) ++nPairs;
+  std::cout << refsums << " " << nPairs << std::endl;
+  assert(nPairs==refsums.a()+refsums.b()+refsums.c()+refsums.d());
+  itpair.addConditionOnPair(1,true);
+  itpair.reset();
+  nPairs=0;
+  while (itpair.next()) ++nPairs;
+  std::cout << refsums << " " << nPairs << std::endl;
+  assert(nPairs==refsums.a()+refsums.d());
+  itpair.addConditionOnPair(1,false);
+  itpair.reset();
+  nPairs=0;
+  while (itpair.next()) ++nPairs;
+  std::cout << refsums << " " << nPairs << std::endl;
+  assert(nPairs==refsums.c()+refsums.b());
+  itpair.addConditionOnPair(1,true);
+  itpair.addConditionOnPair(0,true);
+  itpair.reset();
+  nPairs=0;
+  while (itpair.next()) ++nPairs;
+  std::cout << refsums << " " << nPairs << std::endl;
+  assert(nPairs==refsums.a());
+  itpair.addConditionOnPair(1,true);
+  itpair.addConditionOnPair(0,false);
+  itpair.reset();
+  nPairs=0;
+  while (itpair.next()) ++nPairs;
+  std::cout << refsums << " " << nPairs << std::endl;
+  assert(nPairs==refsums.d());
+  
   c.reset(200);
   assert(c.numberOfHits()==200);
   assert(c.numberOfClustersPerClustering().size()==2);

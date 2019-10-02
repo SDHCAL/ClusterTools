@@ -25,7 +25,7 @@ set ( ${PROJECT_NAME}_exesource
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(test_HitClusterInfo src/test_HitClusterInfo.cpp src/HitClusterInfo.cpp)
+add_executable(test_HitClusterInfo src/test_HitClusterInfo.cpp src/HitClusterInfo.cpp  src/ClusterPairsDataSums.cpp)
 add_test(test_HitClusterInfo_runs test_HitClusterInfo)
 
 if (BUILD_WITH_LCIO)

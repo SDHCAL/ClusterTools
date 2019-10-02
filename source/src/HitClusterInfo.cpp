@@ -169,6 +169,15 @@ void HitClusterInfo::randomClustering(std::vector<unsigned int> numbersOfCluster
 }
 
 
+void HitClusterInfo_pairIterator::reset()
+{
+  pbegin=m_hci.m_pointersToHits_and_Clusters.data();
+  pend=pbegin+m_hci.m_pointersToHits_and_Clusters.size();
+  p.first=pbegin;
+  p.second=p.first;
+}
+
+
 #ifdef BUILD_WITH_ROOT
 HitClusterInfo_ToTtree::HitClusterInfo_ToTtree(const HitClusterInfo& hitclusterinfo,std::string treeName) :
   m_hitclusterinfo(hitclusterinfo)
