@@ -10,14 +10,14 @@ class ClusterPairsDataSums
   //long explicit name getter
   unsigned int numberOfCoGroupedHitPair_InBothClusterSets() const {return m_numberOfCoGroupedHitPair_InBothClusterSets;}  //a, TP
   unsigned int numberOfCoGroupedHitPair_OnlyInFirstClusterSet() const {return m_numberOfCoGroupedHitPair_OnlyInFirstClusterSet;} //c, FN
-  unsigned int numberOfCoGroupedHitPair_OnlyInSedondClusterSet() const {return m_numberOfCoGroupedHitPair_OnlyInSedondClusterSet;} // d, FP
+  unsigned int numberOfCoGroupedHitPair_OnlyInSecondClusterSet() const {return m_numberOfCoGroupedHitPair_OnlyInSedondClusterSet;} // d, FP
   unsigned int numberOfNonCoGroupedHitPair_InBothClusterSets() const {return m_numberOfNonCoGroupedHitPair_InBothClusterSets;} // b, TN
 
   //wikipedia Rand Index labelling
   unsigned int a() const {return numberOfCoGroupedHitPair_InBothClusterSets();}
   unsigned int b() const {return numberOfNonCoGroupedHitPair_InBothClusterSets();}
   unsigned int c() const {return numberOfCoGroupedHitPair_OnlyInFirstClusterSet();}
-  unsigned int d() const {return numberOfCoGroupedHitPair_OnlyInSedondClusterSet();}
+  unsigned int d() const {return numberOfCoGroupedHitPair_OnlyInSecondClusterSet();}
   
   //wikipedia Cluster_analysis#External_evaluation labelling
   //Here first cluster set in assumed to be a truth reference
@@ -26,7 +26,7 @@ class ClusterPairsDataSums
   unsigned int TP() const {return NumberOfTruePositive();}
   unsigned int NumberOfTrueNegative() const {return numberOfNonCoGroupedHitPair_InBothClusterSets();}
   unsigned int TN() const {return NumberOfTrueNegative();}
-  unsigned int NumberOfFalsePostive() const {return numberOfCoGroupedHitPair_OnlyInSedondClusterSet();}
+  unsigned int NumberOfFalsePostive() const {return numberOfCoGroupedHitPair_OnlyInSecondClusterSet();}
   unsigned int FP() const {return NumberOfFalsePostive();}
   unsigned int NumberOfFalseNegative() const {return numberOfCoGroupedHitPair_OnlyInFirstClusterSet();}
   unsigned int FN() const {return NumberOfFalseNegative();}

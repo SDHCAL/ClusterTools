@@ -12,7 +12,7 @@ std::ostream& operator<<(std::ostream& flux, const ClusterPairsDataSums obj)
 {
   flux << obj.numberOfCoGroupedHitPair_InBothClusterSets() << " "
        << obj.numberOfCoGroupedHitPair_OnlyInFirstClusterSet() << " "
-       << obj.numberOfCoGroupedHitPair_OnlyInSedondClusterSet() << " "
+       << obj.numberOfCoGroupedHitPair_OnlyInSecondClusterSet() << " "
        << obj.numberOfNonCoGroupedHitPair_InBothClusterSets();
   return flux;
 }
